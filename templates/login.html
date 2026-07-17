@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-content">
+        <!-- Left Side - Info -->
+        <div class="auth-info">
+            <h1 style="font-size: 36px; margin-bottom: 20px;">LifeHub</h1>
+            <p style="font-size: 18px; line-height: 1.6; opacity: 0.9;">
+                Hayotingizni boshqarish platformasi. Vazifalar, xarajatlar, eslatmalar va boshqalar - barchasi bir joyda!
+            </p>
+            <div style="margin-top: 30px;">
+                <i class="fas fa-check-circle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <p>Glassmorphism dizayn</p>
+            </div>
+            <div style="margin-top: 15px;">
+                <i class="fas fa-check-circle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <p>Minimal UI</p>
+            </div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="auth-form">
+            <h2><i class="fas fa-user"></i> Kirish</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Username kiriting" required>
+                </div>
+                <div class="form-group">
+                    <label>Parol</label>
+                    <input type="password" name="password" placeholder="Parolingiz" required>
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" name="remember"> Eslab qolish</label>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Kirish</button>
+                <p style="margin-top: 20px; text-align: center; font-size: 14px;">
+                    <a href="{% url 'forgot_password' %}" style="color: var(--primary);">Parolni unutdingizmi?</a>
+                </p>
+                <p style="margin-top: 10px; text-align: center; font-size: 14px;">
+                    Akkount yo'q? <a href="{% url 'register' %}" style="color: var(--primary);">Ro'yxatdan o'tish</a>
+                </p>
+            </form>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <p style="opacity: 0.6; margin-bottom: 15px;">Yoki ijtimoiy tarmoqlar orqali:</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn btn-outline" style="width: 50px; height: 40px;"><i class="fab fa-google"></i></button>
+                    <button class="btn btn-outline" style="width: 50px; height: 40px;"><i class="fab fa-github"></i></button>
+                    <button class="btn btn-outline" style="width: 50px; height: 40px;"><i class="fab fa-telegram"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

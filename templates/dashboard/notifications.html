@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar (Desktop) -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i> Calendar</a></li>
+            <li><a href="{% url 'tasks' %}"><i class="fas fa-tasks"></i> Tasks</a></li>
+            <li><a href="{% url 'notes' %}"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fas fa-money-bill-wave"></i> Expenses</a></li>
+            <li><a href="{% url 'documents' %}"><i class="fas fa-folder"></i> Documents</a></li>
+            <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="{% url 'notifications' %}" class="active"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color: var(--primary);"><i class="fas fa-bell"></i> Notifications</h2>
+            <div>
+                <button class="btn btn-outline" onclick="markAllAsRead()" style="padding: 8px 16px; font-size: 14px; margin-right: 10px;"><i class="fas fa-check-double"></i> Mark All Read</button>
+                <button class="btn btn-outline" onclick="clearAllNotifications()" style="padding: 8px 16px; font-size: 14px;"><i class="fas fa-trash-alt"></i> Clear All</button>
+                <button class="btn btn-primary" onclick="showAddNotificationModal()" style="padding: 8px 16px; font-size: 14px; margin-left: 10px;"><i class="fas fa-plus"></i> Add</button>
+            </div>
+        </div>
+        
+        <div class="glass-card">
+            <!-- Today -->
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-circle" style="font-size: 10px;"></i> Today</h3>
+                <div class="task-item" data-id="1">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    <span class="task-text">Task Completed: Study Django</span>
+                    <span style="opacity: 0.6; font-size: 12px;">10:30</span>
+                    <button onclick="editNotification(1, this)" class="notification-btn" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-left: auto;"><i class="fas fa-edit"></i></button>
+                    <button onclick="markAsRead(1, this)" class="notification-btn" style="background: none; border: none; color: var(--success); cursor: pointer;"><i class="fas fa-check"></i></button>
+                    <button onclick="deleteNotification(1, this)" class="notification-btn" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="task-item" data-id="2">
+                    <i class="fas fa-plus-circle" style="color: var(--primary);"></i>
+                    <span class="task-text">Expense Added: Fast Food - 150 000 so'm</span>
+                    <span style="opacity: 0.6; font-size: 12px;">12:45</span>
+                    <button onclick="editNotification(2, this)" class="notification-btn" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-left: auto;"><i class="fas fa-edit"></i></button>
+                    <button onclick="markAsRead(2, this)" class="notification-btn" style="background: none; border: none; color: var(--success); cursor: pointer;"><i class="fas fa-check"></i></button>
+                    <button onclick="deleteNotification(2, this)" class="notification-btn" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            
+            <!-- Yesterday -->
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-circle" style="font-size: 10px;"></i> Yesterday</h3>
+                <div class="task-item" data-id="3">
+                    <i class="fas fa-calendar-plus" style="color: var(--warning);"></i>
+                    <span class="task-text">Reminder: Meeting with client</span>
+                    <span style="opacity: 0.6; font-size: 12px;">09:00</span>
+                    <button onclick="editNotification(3, this)" class="notification-btn" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-left: auto;"><i class="fas fa-edit"></i></button>
+                    <button onclick="markAsRead(3, this)" class="notification-btn" style="background: none; border: none; color: var(--success); cursor: pointer;"><i class="fas fa-check"></i></button>
+                    <button onclick="deleteNotification(3, this)" class="notification-btn" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="task-item" data-id="4">
+                    <i class="fas fa-file-upload" style="color: var(--secondary);"></i>
+                    <span class="task-text">Document uploaded: Contract.pdf</span>
+                    <span style="opacity: 0.6; font-size: 12px;">14:20</span>
+                    <button onclick="editNotification(4, this)" class="notification-btn" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-left: auto;"><i class="fas fa-edit"></i></button>
+                    <button onclick="markAsRead(4, this)" class="notification-btn" style="background: none; border: none; color: var(--success); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                    <button onclick="deleteNotification(4, this)" class="notification-btn" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            
+            <!-- This Week -->
+            <div>
+                <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-circle" style="font-size: 10px;"></i> This Week</h3>
+                <div class="task-item" data-id="5">
+                    <i class="fas fa-tasks" style="color: var(--primary);"></i>
+                    <span class="task-text">New task added: Buy groceries</span>
+                    <span style="opacity: 0.6; font-size: 12px;">Mon</span>
+                    <button onclick="editNotification(5, this)" class="notification-btn" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-left: auto;"><i class="fas fa-edit"></i></button>
+                    <button onclick="markAsRead(5, this)" class="notification-btn" style="background: none; border: none; color: var(--success); cursor: pointer;"><i class="fas fa-check"></i></button>
+                    <button onclick="deleteNotification(5, this)" class="notification-btn" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="task-item" data-id="6">
+                    <i class="fas fa-money-bill-wave" style="color: var(--success);"></i>
+                    <span class="task-text">Expense added: Internet bill</span>
+                    <span style="opacity: 0.6; font-size: 12px;">Tue</span>
+                    <button onclick="editNotification(6, this)" class="notification-btn" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-left: auto;"><i class="fas fa-edit"></i></button>
+                    <button onclick="markAsRead(6, this)" class="notification-btn" style="background: none; border: none; color: var(--success); cursor: pointer;"><i class="fas fa-check"></i></button>
+                    <button onclick="deleteNotification(6, this)" class="notification-btn" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add Notification Modal -->
+<div id="addNotificationModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0;"><i class="fas fa-bell"></i> Add New Notification</h3>
+            <button onclick="closeAddNotificationModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addNotificationForm" onsubmit="addNotification(event)">
+            <div class="form-group">
+                <label for="notificationTitle">Notification Title</label>
+                <input type="text" id="notificationTitle" name="title" required placeholder="Enter notification title...">
+            </div>
+            <div class="form-group">
+                <label for="notificationType">Type</label>
+                <select id="notificationType" name="type" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
+                    <option value="task">Task</option>
+                    <option value="expense">Expense</option>
+                    <option value="reminder">Reminder</option>
+                    <option value="document">Document</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="notificationTime">Time</label>
+                <input type="text" id="notificationTime" name="time" placeholder="Enter time (e.g., 10:30)">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" onclick="closeAddNotificationModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Notification</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+    <i class="fas fa-bars"></i>
+</button>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Show add notification modal
+function showAddNotificationModal() {
+    const modal = document.getElementById('addNotificationModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+    }
+}
+
+// Close add notification modal
+function closeAddNotificationModal() {
+    const modal = document.getElementById('addNotificationModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Add notification
+function addNotification(event) {
+    event.preventDefault();
+    const title = document.getElementById('notificationTitle').value;
+    const type = document.getElementById('notificationType').value;
+    const time = document.getElementById('notificationTime').value;
+    
+    if (title) {
+        // Get icon based on type
+        const icons = {
+            'task': 'fa-tasks',
+            'expense': 'fa-money-bill-wave',
+            'reminder': 'fa-calendar-plus',
+            'document': 'fa-file-upload'
+        };
+        
+        // Create new notification element
+        const todaySection = document.querySelector('.glass-card > div:first-child');
+        const newNotification = document.createElement('div');
+        newNotification.className = 'task-item';
+        newNotification.setAttribute('data-id', Date.now());
+        
+        newNotification.innerHTML = `
+            <i class="fas ${icons[type]}" style="color: var(--primary);"></i>
+            <span class="task-text">${title}</span>
+            <span style="opacity: 0.6; font-size: 12px;">${time || 'now'}</span>
+            <button onclick="editNotification(${Date.now()}, this)" class="notification-btn" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-left: auto;"><i class="fas fa-edit"></i></button>
+            <button onclick="markAsRead(${Date.now()}, this)" class="notification-btn" style="background: none; border: none; color: var(--success); cursor: pointer;"><i class="fas fa-check"></i></button>
+            <button onclick="deleteNotification(${Date.now()}, this)" class="notification-btn" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+        `;
+        
+        todaySection.appendChild(newNotification);
+        
+        // Reset form and close modal
+        document.getElementById('addNotificationForm').reset();
+        closeAddNotificationModal();
+        
+        showToast('Notification added successfully!');
+    }
+}
+
+// Edit notification
+function editNotification(notificationId, button) {
+    const notificationItem = button.closest('.task-item');
+    const currentText = notificationItem.querySelector('.task-text').textContent;
+    const currentTime = notificationItem.querySelector('span[style*="opacity"]').textContent;
+    
+    // Populate the add notification modal with current content
+    document.getElementById('notificationTitle').value = currentText;
+    document.getElementById('notificationTime').value = currentTime;
+    
+    showAddNotificationModal();
+}
+</script>
+{% endblock %}

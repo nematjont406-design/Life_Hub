@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block title %}Ideas{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar (Desktop) -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i> Calendar</a></li>
+            <li><a href="{% url 'tasks' %}"><i class="fas fa-tasks"></i> Tasks</a></li>
+            <li><a href="{% url 'notes' %}"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fas fa-money-bill-wave"></i> Expenses</a></li>
+            <li><a href="{% url 'documents' %}"><i class="fas fa-folder"></i> Documents</a></li>
+            <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="{% url 'ideas' %}" class="active"><i class="fas fa-lightbulb"></i> Ideas</a></li>
+            <li><a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="notes-container">
+            <!-- Ideas Sidebar (Folders) -->
+            <div class="notes-sidebar">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary);"><i class="fas fa-folder"></i> Ideas Folders</h3>
+                    <button class="btn btn-primary" style="padding: 8px; width: 36px; height: 36px;" onclick="showAddIdeaModal()"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <div id="foldersList">
+                    <div class="folder-item active" data-folder="all" onclick="selectIdeaFolder('all', this)">
+                        <i class="fas fa-folder"></i>
+                        <span>All Ideas</span>
+                    </div>
+                    <div class="folder-item" data-folder="ideas" onclick="selectIdeaFolder('ideas', this)">
+                        <i class="fas fa-folder"></i>
+                        <span>Ideas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ideas List -->
+            <div class="notes-editor">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--primary);"><i class="fas fa-lightbulb"></i> My Ideas</h2>
+                    <button class="btn btn-primary" style="padding: 8px 16px;" onclick="showAddIdeaModal()"><i class="fas fa-plus"></i> Add Idea</button>
+                </div>
+                
+                <div id="ideasList" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+                    {% for idea in ideas %}
+                    <div class="idea-item" data-id="{{ idea.id }}" data-folder="{{ idea.folder }}" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease;" onclick="viewIdea({{ idea.id }})">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <h3 style="color: var(--primary); margin: 0 0 10px 0;">{{ idea.title }}</h3>
+                            <div>
+                                <button onclick="event.stopPropagation(); editIdea({{ idea.id }})" style="background: none; border: none; color: var(--text); cursor: pointer; margin-right: 10px;"><i class="fas fa-edit"></i></button>
+                                <button onclick="event.stopPropagation(); deleteIdea({{ idea.id }})" style="background: none; border: none; color: var(--text); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <p style="color: var(--text); margin: 0; opacity: 0.8; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ idea.content|truncatewords:20 }}</p>
+                        <div style="margin-top: 10px; font-size: 12px; color: var(--text); opacity: 0.6;">
+                            <span>{{ idea.created_at|date:"M d, Y" }}</span>
+                            <span style="margin-left: 10px;">{{ idea.folder }}</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div style="text-align: center; padding: 40px; color: var(--text); opacity: 0.6;">
+                        <i class="fas fa-lightbulb" style="font-size: 48px; margin-bottom: 10px;"></i>
+                        <p>No ideas yet. Click "Add Idea" to create your first idea!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add/Edit Idea Modal -->
+<div id="ideaModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 600px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0;"><i class="fas fa-lightbulb"></i> <span id="modalTitle">Add Idea</span></h3>
+            <button onclick="closeIdeaModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="ideaForm" method="POST" action="{% url 'add_idea' %}">
+            {% csrf_token %}
+            <input type="hidden" id="ideaId" name="idea_id" value="">
+            <div class="form-group">
+                <label for="ideaTitle">Idea Title</label>
+                <input type="text" id="ideaTitle" name="title" required placeholder="Enter idea title...">
+            </div>
+            <div class="form-group">
+                <label for="ideaContent">Idea Content</label>
+                <textarea id="ideaContent" name="content" placeholder="Write your idea here..." style="width: 100%; height: 200px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; color: var(--text); font-size: 15px; resize: none;"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="ideaFolder">Folder</label>
+                <input type="text" id="ideaFolder" name="folder" value="ideas" placeholder="Enter folder name...">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" onclick="closeIdeaModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Idea</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+    <i class="fas fa-bars"></i>
+</button>
+
+<script>
+function showAddIdeaModal() {
+    document.getElementById('modalTitle').textContent = 'Add Idea';
+    document.getElementById('ideaForm').action = '{% url "add_idea" %}';
+    document.getElementById('ideaId').value = '';
+    document.getElementById('ideaTitle').value = '';
+    document.getElementById('ideaContent').value = '';
+    document.getElementById('ideaFolder').value = 'ideas';
+    document.getElementById('ideaModal').style.display = 'flex';
+}
+
+function closeIdeaModal() {
+    document.getElementById('ideaModal').style.display = 'none';
+}
+
+function viewIdea(ideaId) {
+    fetch(`/get-idea/${ideaId}/`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('ideaTitle').value = data.title;
+            document.getElementById('ideaContent').value = data.content;
+            document.getElementById('ideaFolder').value = data.folder;
+            document.getElementById('ideaId').value = data.id;
+            document.getElementById('ideaForm').action = `/edit-idea/${data.id}/`;
+            document.getElementById('ideaModal').style.display = 'flex';
+        });
+}
+
+function editIdea(ideaId) {
+    viewIdea(ideaId);
+}
+
+function deleteIdea(ideaId) {
+    if (confirm('Are you sure you want to delete this idea?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-idea/${ideaId}/`;
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function selectIdeaFolder(folder, element) {
+    document.querySelectorAll('.folder-item').forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+    
+    document.querySelectorAll('.idea-item').forEach(item => {
+        if (folder === 'all' || item.dataset.folder === folder) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

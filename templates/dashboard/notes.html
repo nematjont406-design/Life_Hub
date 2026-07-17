@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Notes{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar (Desktop) -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i> Calendar</a></li>
+            <li><a href="{% url 'tasks' %}"><i class="fas fa-tasks"></i> Tasks</a></li>
+            <li><a href="{% url 'notes' %}" class="active"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fas fa-money-bill-wave"></i> Expenses</a></li>
+            <li><a href="{% url 'documents' %}"><i class="fas fa-folder"></i> Documents</a></li>
+            <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="notes-container">
+            <!-- Notes Sidebar (Folders) -->
+            <div class="notes-sidebar">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary);"><i class="fas fa-folder"></i> Folders</h3>
+                    <button class="btn btn-primary" style="padding: 8px; width: 36px; height: 36px;" onclick="showAddFolderModal()"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <div id="foldersList">
+                    <div class="folder-item active" data-folder="all" onclick="selectFolder('all', this)">
+                        <i class="fas fa-folder"></i>
+                        <span>All Notes</span>
+                    </div>
+                    {% for note in notes %}
+                    {% if note.folder %}
+                    <div class="folder-item" data-folder="{{ note.folder }}" onclick="selectFolder('{{ note.folder }}', this)">
+                        <i class="fas fa-folder"></i>
+                        <span>{{ note.folder }}</span>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Notes Editor -->
+            <div class="notes-editor">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 id="currentNoteTitle" style="color: var(--primary);"><i class="fas fa-sticky-note"></i> Select a note</h2>
+                    <div>
+                        <button class="btn btn-outline" style="padding: 8px 12px; margin-right: 5px;" onclick="editCurrentNote()"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-outline" style="padding: 8px 12px; margin-right: 5px;" onclick="deleteCurrentNote()"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-primary" style="padding: 8px 16px;" onclick="saveNote()"><i class="fas fa-save"></i> Save</button>
+                    </div>
+                </div>
+                
+                <textarea id="noteContent" placeholder="Write your note here..." style="width: 100%; height: calc(100% - 80px); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; color: var(--text); font-size: 16px; resize: none;"></textarea>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add Folder Modal -->
+<div id="addFolderModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 400px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0;"><i class="fas fa-folder"></i> Add New Folder</h3>
+            <button onclick="closeAddFolderModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addFolderForm" onsubmit="addFolder(event)">
+            <div class="form-group">
+                <label for="folderName">Folder Name</label>
+                <input type="text" id="folderName" name="name" required placeholder="Enter folder name...">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" onclick="closeAddFolderModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Folder</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Note Modal -->
+<div id="addNoteModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0;"><i class="fas fa-sticky-note"></i> Add New Note</h3>
+            <button onclick="closeAddNoteModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addNoteForm" method="POST" action="{% url 'add_note' %}">
+            {% csrf_token %}
+            <input type="hidden" id="noteId" name="note_id" value="">
+            <div class="form-group">
+                <label for="noteTitle">Note Title</label>
+                <input type="text" id="noteTitle" name="title" required placeholder="Enter note title...">
+            </div>
+            <div class="form-group">
+                <label for="noteText">Note Content</label>
+                <textarea id="noteText" name="content" placeholder="Write your note here..." style="width: 100%; height: 150px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; color: var(--text); font-size: 15px; resize: none;"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="noteFolder">Folder</label>
+                <input type="text" id="noteFolder" name="folder" value="all" placeholder="Enter folder name...">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" onclick="closeAddNoteModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Note</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+    <i class="fas fa-bars"></i>
+</button>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// View note
+function viewNote(noteId) {
+    fetch(`/get-note/${noteId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                document.getElementById('currentNoteTitle').innerHTML = '<i class="fas fa-sticky-note"></i> ' + data.title;
+                document.getElementById('noteContent').value = data.content;
+                document.getElementById('noteId').value = data.id;
+            }
+        });
+}
+
+// Edit current note
+function editCurrentNote() {
+    const noteId = document.getElementById('noteId').value;
+    if (noteId) {
+        viewNote(noteId);
+        document.getElementById('addNoteForm').action = `/edit-note/${noteId}/`;
+        showAddNoteModal();
+    }
+}
+
+// Delete current note
+function deleteCurrentNote() {
+    const noteId = document.getElementById('noteId').value;
+    if (noteId && confirm('Rostdan ham o\'chirmoqchisiz?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-note/${noteId}/`;
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

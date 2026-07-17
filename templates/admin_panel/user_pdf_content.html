@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Foydalanuvchi hisobot: {{ user_obj.username }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #4f46e5;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #4f46e5;
+            margin: 0;
+            font-size: 24px;
+        }
+        .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+        .section h2 {
+            color: #4f46e5;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .user-info p {
+            margin: 5px 0;
+        }
+        .user-info strong {
+            color: #4f46e5;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+        }
+        th {
+            background: #4f46e5;
+            color: white;
+        }
+        .gallery-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .gallery-item {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-file-pdf"></i> Foydalanuvchi hisobot: {{ user_obj.username }}</h1>
+        <p>Hisobot sanasi: {{ current_date|date:"d.m.Y H:i" }}</p>
+    </div>
+
+    <!-- User Info -->
+    <div class="section">
+        <h2><i class="fas fa-info-circle"></i> Foydalanuvchi ma'lumotlari</h2>
+        <div class="user-info">
+            <p><strong>ID:</strong> {{ user_obj.id }}</p>
+            <p><strong>Foydalanuvchi nomi:</strong> {{ user_obj.username }}</p>
+            <p><strong>Email:</strong> {{ user_obj.email|default:"-" }}</p>
+            <p><strong>Telefon:</strong> {{ user_obj.phone|default:"-" }}</p>
+            <p><strong>Premium:</strong> 
+                {% if user_obj.is_premium %}
+                    <span class="badge badge-success">Ha</span>
+                {% else %}
+                    <span class="badge badge-warning">Yo'q</span>
+                {% endif %}
+            </p>
+            <p><strong>Holat:</strong> 
+                {% if user_obj.is_active %}
+                    <span class="badge badge-success">Faol</span>
+                {% else %}
+                    <span class="badge badge-danger">Bloklangan</span>
+                {% endif %}
+            </p>
+            <p><strong>Ro'yxatdan o'tgan:</strong> {{ user_obj.created_at|date:"d.m.Y H:i" }}</p>
+            <p><strong>Oxirgi kirish:</strong> {{ user_obj.last_login|date:"d.m.Y H:i"|default:"-" }}</p>
+            {% if user_obj.bio %}
+            <p><strong>Bio:</strong> {{ user_obj.bio }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tasks -->
+    {% if user_tasks %}
+    <div class="section">
+        <h2><i class="fas fa-tasks"></i> Vazifalar ({{ user_tasks.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>Holat</th>
+                    <th>Muddati</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in user_tasks %}
+                <tr>
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.get_status_display }}</td>
+                    <td>{{ task.deadline|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Notes -->
+    {% if user_notes %}
+    <div class="section">
+        <h2><i class="fas fa-sticky-note"></i> Eslatmalar ({{ user_notes.count }})</h2>
+        {% for note in user_notes %}
+        <div class="card">
+            <strong>{{ note.title }}</strong>
+            <p>{{ note.content|linebreaksbr }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Ideas -->
+    {% if user_ideas %}
+    <div class="section">
+        <h2><i class="fas fa-lightbulb"></i> Ideatlar ({{ user_ideas.count }})</h2>
+        {% for idea in user_ideas %}
+        <div class="card">
+            <strong>{{ idea.title }}</strong>
+            <p>{{ idea.content|linebreaksbr }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Expenses -->
+    {% if user_expenses %}
+    <div class="section">
+        <h2><i class="fas fa-wallet"></i> Chiqimlar ({{ user_expenses.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>Summa</th>
+                    <th>Kategoriya</th>
+                    <th>Sana</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in user_expenses %}
+                <tr>
+                    <td>{{ expense.title }}</td>
+                    <td>{{ expense.amount }} so'm</td>
+                    <td>{{ expense.get_category_display }}</td>
+                    <td>{{ expense.date|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Important Dates -->
+    {% if user_dates %}
+    <div class="section">
+        <h2><i class="fas fa-calendar"></i> Muhim sanalar ({{ user_dates.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>Sana</th>
+                    <th>Turi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for date in user_dates %}
+                <tr>
+                    <td>{{ date.title }}</td>
+                    <td>{{ date.date|date:"d.m.Y" }}</td>
+                    <td>{{ date.get_type_display }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Documents -->
+    {% if user_documents %}
+    <div class="section">
+        <h2><i class="fas fa-file"></i> Hujjatlar ({{ user_documents.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>Fayl</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in user_documents %}
+                <tr>
+                    <td>{{ doc.title }}</td>
+                    <td>{{ doc.file.name|cut:"documents/" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Links -->
+    {% if user_links %}
+    <div class="section">
+        <h2><i class="fas fa-link"></i> Havolalar ({{ user_links.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for link in user_links %}
+                <tr>
+                    <td>{{ link.title }}</td>
+                    <td>{{ link.url }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Contacts -->
+    {% if user_contacts %}
+    <div class="section">
+        <h2><i class="fas fa-address-book"></i> Kontaktlar ({{ user_contacts.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ism</th>
+                    <th>Telefon</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in user_contacts %}
+                <tr>
+                    <td>{{ contact.name }}</td>
+                    <td>{{ contact.phone|default:"-" }}</td>
+                    <td>{{ contact.email|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Gallery -->
+    {% if user_gallery %}
+    <div class="section">
+        <h2><i class="fas fa-images"></i> Galereya ({{ user_gallery.count }})</h2>
+        <div class="gallery-grid">
+            {% for img in user_gallery %}
+            <div class="gallery-item">
+                <img src="{{ img.image.path }}" alt="{{ img.title }}" style="width: 100px; height: 100px; object-fit: cover;">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Wishlist -->
+    {% if user_wishlist %}
+    <div class="section">
+        <h2><i class="fas fa-heart"></i> Istiqbol ro'yxati ({{ user_wishlist.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>Narx</th>
+                    <th>Holat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for wish in user_wishlist %}
+                <tr>
+                    <td>{{ wish.title }}</td>
+                    <td>{{ wish.price|default:"-" }} so'm</td>
+                    <td>
+                        {% if wish.is_purchased %}
+                            <span class="badge badge-success">Sotib olindi</span>
+                        {% else %}
+                            <span class="badge badge-warning">Kutilmoqda</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Health Reminders -->
+    {% if user_health %}
+    <div class="section">
+        <h2><i class="fas fa-heart-pulse"></i> Salomatlik eslatmalari ({{ user_health.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>Vaqt</th>
+                    <th>Tur</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for health in user_health %}
+                <tr>
+                    <td>{{ health.title }}</td>
+                    <td>{{ health.time }}</td>
+                    <td>
+                        {% if health.is_water %}Suv{% elif health.is_medicine %}Dori{% else %}Boshqa{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Shopping List -->
+    {% if user_shopping %}
+    <div class="section">
+        <h2><i class="fas fa-shopping-cart"></i> Xaridlar ro'yxati ({{ user_shopping.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mahsulot</th>
+                    <th>Holat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user_shopping %}
+                <tr>
+                    <td>{{ item.item }}</td>
+                    <td>
+                        {% if item.is_purchased %}
+                            <span class="badge badge-success">Sotib olindi</span>
+                        {% else %}
+                            <span class="badge badge-warning">Kutilmoqda</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Goals -->
+    {% if user_goals %}
+    <div class="section">
+        <h2><i class="fas fa-bullseye"></i> Maqsadlar ({{ user_goals.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>Progress</th>
+                    <th>Muddat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for goal in user_goals %}
+                <tr>
+                    <td>{{ goal.title }}</td>
+                    <td>{{ goal.progress }}%</td>
+                    <td>{{ goal.target_date|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Password Vault -->
+    {% if user_passwords %}
+    <div class="section">
+        <h2><i class="fas fa-key"></i> Parollar ombori ({{ user_passwords.count }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sarlavha</th>
+                    <th>Foydalanuvchi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for password in user_passwords %}
+                <tr>
+                    <td>{{ password.title }}</td>
+                    <td>{{ password.username|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        <p>LifeHub - Foydalanuvchi hisoboti</p>
+    </div>
+</body>
+</html>

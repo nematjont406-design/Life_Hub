@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar (Desktop) -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Sidebar ni yashirish">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i> Calendar</a></li>
+            <li><a href="{% url 'tasks' %}"><i class="fas fa-tasks"></i> Tasks</a></li>
+            <li><a href="{% url 'notes' %}"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fas fa-money-bill-wave"></i> Expenses</a></li>
+            <li><a href="{% url 'documents' %}"><i class="fas fa-folder"></i> Documents</a></li>
+            <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+            {% if user.is_staff %}
+            <li><a href="{% url 'admin_users' %}"><i class="fas fa-users-cog"></i> Foydalanuvchilar</a></li>
+            {% endif %}
+            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <h2>Salom {{ user.first_name|default:user.username }} 👋</h2>
+            <p>Bugungi sana: {{ today|date:"l, d F Y" }} | Ob-havo ☀️ 24°C</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-list"></i></div>
+                <h3>{{ today_tasks }}</h3>
+                <p>Task</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <h3>{{ today_expenses|floatformat:0|intcomma }}</h3>
+                <p>so'm</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+                <h3>{{ upcoming_reminders|length }}</h3>
+                <p>Reminder</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-sticky-note"></i></div>
+                <h3>{{ important_docs }}</h3>
+                <p>Note</p>
+            </div>
+        </div>
+
+        <!-- Today's Schedule -->
+        <div class="glass-card" style="margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-calendar-day"></i> Today's Schedule</h3>
+            <div class="task-item">
+                <span style="font-weight: 600; width: 60px;">08:00</span>
+                <span class="task-text">Sport</span>
+            </div>
+            <div class="task-item">
+                <span style="font-weight: 600; width: 60px;">10:00</span>
+                <span class="task-text">Ish</span>
+            </div>
+            <div class="task-item">
+                <span style="font-weight: 600; width: 60px;">14:00</span>
+                <span class="task-text">Universitet</span>
+            </div>
+        </div>
+
+        <!-- Today's Tasks -->
+        <div class="glass-card" style="margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-list"></i> Today's Tasks</h3>
+            <div class="task-item">
+                <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                <span class="task-text">Wake up</span>
+                <span class="task-priority priority-low">Low</span>
+            </div>
+            <div class="task-item">
+                <div class="task-checkbox checked" onclick="toggleTask(this)"><i class="fas fa-check" style="font-size: 12px;"></i></div>
+                <span class="task-text">Study Django</span>
+                <span class="task-priority priority-high">High</span>
+            </div>
+            <div class="task-item">
+                <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                <span class="task-text">Gym</span>
+                <span class="task-priority priority-medium">Medium</span>
+            </div>
+            <div class="task-item">
+                <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                <span class="task-text">Buy Milk</span>
+                <span class="task-priority priority-low">Low</span>
+            </div>
+        </div>
+
+        <!-- Expenses Chart -->
+        <div class="expenses-chart">
+            <h3 style="color: var(--primary); margin-bottom: 20px;"><i class="fas fa-chart-pie"></i> Expenses Chart</h3>
+            <div class="expense-item">
+                <div>
+                    <strong>Food</strong>
+                    <div class="expense-bar">
+                        <div class="expense-bar-fill" style="width: 65%;"></div>
+                    </div>
+                </div>
+                <span>65%</span>
+            </div>
+            <div class="expense-item">
+                <div>
+                    <strong>Transport</strong>
+                    <div class="expense-bar">
+                        <div class="expense-bar-fill" style="width: 35%;"></div>
+                    </div>
+                </div>
+                <span>35%</span>
+            </div>
+            <div class="expense-item">
+                <div>
+                    <strong>Internet</strong>
+                    <div class="expense-bar">
+                        <div class="expense-bar-fill" style="width: 20%;"></div>
+                    </div>
+                </div>
+                <span>20%</span>
+            </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="glass-card">
+            <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-clock"></i> Upcoming Events</h3>
+            {% for reminder in upcoming_reminders %}
+            <div class="task-item">
+                <i class="fas fa-birthday-cake" style="color: var(--warning);"></i>
+                <span class="task-text">{{ reminder.title }}</span>
+                <span style="opacity: 0.6; font-size: 14px;">{{ reminder.date|date:"d F" }}</span>
+            </div>
+            {% empty %}
+            <div class="task-item">
+                <i class="fas fa-birthday-cake" style="color: var(--warning);"></i>
+                <span class="task-text">Dadamning torti</span>
+                <span style="opacity: 0.6; font-size: 14px;">25 July</span>
+            </div>
+            <div class="task-item">
+                <i class="fas fa-briefcase" style="color: var(--primary);"></i>
+                <span class="task-text">Interview</span>
+                <span style="opacity: 0.6; font-size: 14px;">28 July</span>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+    <i class="fas fa-bars"></i>
+</button>
+{% endblock %}

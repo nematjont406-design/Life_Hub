@@ -1,0 +1,44 @@
+    {% extends 'base.html' %}
+{% block title %}Aloqa{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>Aloqa</h1>
+        <p>Biz bilan bog'laning</p>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-envelope"></i>
+                <h3>Email</h3>
+                <p>info@usifulsite.uz</p>
+            </div>
+            <div class="feature-card">
+                <i class="fab fa-telegram"></i>
+                <h3>Telegram</h3>
+                <p>@usifulsite</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; background: var(--glass); padding: 30px; border-radius: 15px; backdrop-filter: blur(15px); border: 1px solid var(--glass-border);">
+            <h3 style="color: var(--accent); margin-bottom: 20px;">Aloqa Formasi</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="Ismingiz" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea name="message" placeholder="Xabar" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-glow">Yuborish</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

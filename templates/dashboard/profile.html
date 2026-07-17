@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar (Desktop) -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i> Calendar</a></li>
+            <li><a href="{% url 'tasks' %}"><i class="fas fa-tasks"></i> Tasks</a></li>
+            <li><a href="{% url 'notes' %}"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fas fa-money-bill-wave"></i> Expenses</a></li>
+            <li><a href="{% url 'documents' %}"><i class="fas fa-folder"></i> Documents</a></li>
+            <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar-container">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Avatar" class="profile-avatar-img" id="avatarPreview">
+                {% else %}
+                    <div class="profile-avatar" id="avatarPreview">
+                        <i class="fas fa-user"></i>
+                    </div>
+                {% endif %}
+                <label for="avatarInput" class="avatar-upload-btn" title="Rasmni o'zgartirish">
+                    <i class="fas fa-camera"></i>
+                </label>
+            </div>
+            <h2 class="profile-name">{{ user.get_full_name|default:user.username }}</h2>
+            <p class="profile-username">@{{ user.username }}</p>
+            {% if user.is_premium %}
+                <span class="premium-badge">Premium</span>
+            {% endif %}
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" style="margin-bottom: 20px;">
+            <div class="stat-card">
+                <h3>{{ user.task_set.count }}</h3>
+                <p>Tasks</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ user.note_set.count }}</h3>
+                <p>Notes</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ user.document_set.count }}</h3>
+                <p>Documents</p>
+            </div>
+        </div>
+
+        <!-- Profile Edit Form -->
+        <div class="settings-list" style="margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-user-edit"></i> Profilni tahrirlash</h3>
+            
+            <form method="POST" enctype="multipart/form-data" id="profileForm">
+                {% csrf_token %}
+                <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;">
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="first_name" style="display: block; margin-bottom: 5px; color: var(--text);">Ism</label>
+                    <input type="text" id="first_name" name="first_name" class="form-control" value="{{ user.first_name }}" placeholder="Ismingiz" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="last_name" style="display: block; margin-bottom: 5px; color: var(--text);">Familiya</label>
+                    <input type="text" id="last_name" name="last_name" class="form-control" value="{{ user.last_name }}" placeholder="Familiyangiz" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="email" style="display: block; margin-bottom: 5px; color: var(--text);">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" placeholder="Email manzilingiz" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="phone" style="display: block; margin-bottom: 5px; color: var(--text);">Telefon</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" value="{{ user.phone|default:'' }}" placeholder="Telefon raqamingiz" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="bio" style="display: block; margin-bottom: 5px; color: var(--text);">Biografiya</label>
+                    <textarea id="bio" name="bio" class="form-control" placeholder="O'zingiz haqingizda..." rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">{{ user.bio|default:'' }}</textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-save"></i> Saqlash</button>
+            </form>
+        </div>
+
+        <!-- Password Change Form -->
+        <div class="settings-list" style="margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-key"></i> Parolni o'zgartirish</h3>
+            
+            <form method="POST" action="{% url 'change_password' %}" id="passwordForm">
+                {% csrf_token %}
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="old_password" style="display: block; margin-bottom: 5px; color: var(--text);">Joriy parol</label>
+                    <input type="password" id="old_password" name="old_password" class="form-control" placeholder="Joriy parolingiz" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="new_password1" style="display: block; margin-bottom: 5px; color: var(--text);">Yangi parol</label>
+                    <input type="password" id="new_password1" name="new_password1" class="form-control" placeholder="Yangi parol" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="new_password2" style="display: block; margin-bottom: 5px; color: var(--text);">Yangi parolni tasdiqlang</label>
+                    <input type="password" id="new_password2" name="new_password2" class="form-control" placeholder="Yangi parolni qayta kiriting" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-key"></i> Parolni o'zgartirish</button>
+            </form>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="settings-list" style="margin-bottom: 20px;">
+            <a href="{% url 'tasks' %}" class="settings-item" style="text-decoration: none; color: var(--text);">
+                <div>
+                    <strong>Tasks</strong>
+                    <p style="font-size: 12px; opacity: 0.6; margin: 0;">Manage your tasks</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            <a href="{% url 'documents' %}" class="settings-item" style="text-decoration: none; color: var(--text);">
+                <div>
+                    <strong>Documents</strong>
+                    <p style="font-size: 12px; opacity: 0.6; margin: 0;">Your files</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            <a href="{% url 'notes' %}" class="settings-item" style="text-decoration: none; color: var(--text);">
+                <div>
+                    <strong>Notes</strong>
+                    <p style="font-size: 12px; opacity: 0.6; margin: 0;">Your notes</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            <a href="{% url 'expenses' %}" class="settings-item" style="text-decoration: none; color: var(--text);">
+                <div>
+                    <strong>Expenses</strong>
+                    <p style="font-size: 12px; opacity: 0.6; margin: 0;">Track spending</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <!-- Logout Button -->
+        <a href="{% url 'logout' %}" onclick="return confirmLogout()" class="btn btn-outline" style="width: 100%;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </main>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+    <i class="fas fa-bars"></i>
+</button>
+
+<script>
+// Avatar preview
+document.getElementById('avatarInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('avatarPreview');
+            preview.innerHTML = '<img src="' + e.target.result + '" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">';
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+// Show toast message
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 12px 24px; border-radius: 8px; z-index: 1000;';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}FAQ{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>FAQ</h1>
+        <p>Ko'p beriladigan savollar</p>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div style="background: var(--glass); padding: 30px; border-radius: 15px; backdrop-filter: blur(15px); border: 1px solid var(--glass-border);">
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: var(--accent); margin-bottom: 10px;"><i class="fas fa-question-circle"></i> Savol: UsifulSite dan foydalanish bepulmi?</h3>
+                <p style="opacity: 0.8; line-height: 1.6;">Ha, asosiy funksiyalar bepul. Premium versiyada qo'shimcha imkoniyatlar mavjud.</p>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: var(--accent); margin-bottom: 10px;"><i class="fas fa-question-circle"></i> Savol: Ma'lumotlarim xavfsizmi?</h3>
+                <p style="opacity: 0.8; line-height: 1.6;">Ha, barcha ma'lumotlar shifrlangan holda saqlanadi.</p>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <h3 style="color: var(--accent); margin-bottom: 10px;"><i class="fas fa-question-circle"></i> Savol: Platforma responsive ekanmi?</h3>
+                <p style="opacity: 0.8; line-height: 1.6;">Ha, barcha qurilmalarda ishlaydi: telefon, planshet, kompyuter.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

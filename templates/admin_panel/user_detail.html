@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% block title %}Foydalanuvchi: {{ user_obj.username }}{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar (Desktop) -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Admin Dashboard</a></li>
+            <li><a href="{% url 'admin_users' %}"><i class="fas fa-users-cog"></i> Foydalanuvchilar</a></li>
+            <li><a href="{% url 'admin_analytics' %}"><i class="fas fa-chart-line"></i> Analytics</a></li>
+            <li><a href="{% url 'admin_notifications' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="{% url 'admin_settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="admin-dashboard">
+    <div class="admin-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h1><i class="fas fa-user"></i> {{ user_obj.username }}</h1>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'admin_users' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Orqaga</a>
+            <a href="{% url 'admin_user_edit' user_obj.id %}" class="btn btn-primary"><i class="fas fa-edit"></i> Tahrirlash</a>
+            <a href="{% url 'admin_user_delete' user_obj.id %}" class="btn btn-outline" style="color: var(--danger); border-color: var(--danger);" onclick="return confirm('Rostdan ham o\'chirmoqchisiz?');"><i class="fas fa-trash"></i> O'chirish</a>
+            <a href="{% url 'admin_user_pdf' user_obj.id %}" class="btn btn-primary" target="_blank"><i class="fas fa-file-pdf"></i> PDF</a>
+        </div>
+    </div>
+    
+    <!-- User Info -->
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-info-circle"></i> Foydalanuvchi ma'lumotlari</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div>
+                <p><strong>ID:</strong> {{ user_obj.id }}</p>
+                <p><strong>Foydalanuvchi nomi:</strong> {{ user_obj.username }}</p>
+                <p><strong>Email:</strong> {{ user_obj.email|default:"-" }}</p>
+                <p><strong>Telefon:</strong> {{ user_obj.phone|default:"-" }}</p>
+            </div>
+            <div>
+                <p><strong>Premium:</strong> 
+                    {% if user_obj.is_premium %}
+                        <span style="color: var(--success);">Ha</span>
+                    {% else %}
+                        <span style="color: var(--text); opacity: 0.5;">Yo'q</span>
+                    {% endif %}
+                </p>
+                <p><strong>Holat:</strong> 
+                    {% if user_obj.is_active %}
+                        <span style="color: var(--success);">Faol</span>
+                    {% else %}
+                        <span style="color: var(--danger);">Bloklangan</span>
+                    {% endif %}
+                </p>
+                <p><strong>Ro'yxatdan o'tgan:</strong> {{ user_obj.created_at|date:"d.m.Y H:i" }}</p>
+                <p><strong>Oxirgi kirish:</strong> {{ user_obj.last_login|date:"d.m.Y H:i"|default:"-" }}</p>
+            </div>
+        </div>
+        {% if user_obj.bio %}
+        <div style="margin-top: 20px;">
+            <p><strong>Bio:</strong> {{ user_obj.bio }}</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- User Data Summary -->
+    <div class="stats-grid" style="margin-top: 20px;">
+        <div class="stat-card">
+            <i class="fas fa-tasks stat-icon"></i>
+            <h3>{{ user_tasks.count }}</h3>
+            <p>Vazifalar</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-sticky-note stat-icon"></i>
+            <h3>{{ user_notes.count }}</h3>
+            <p>Eslatmalar</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-lightbulb stat-icon"></i>
+            <h3>{{ user_ideas.count }}</h3>
+            <p>Ideatlar</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-wallet stat-icon"></i>
+            <h3>{{ user_expenses.count }}</h3>
+            <p>Chiqimlar</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-calendar stat-icon"></i>
+            <h3>{{ user_dates.count }}</h3>
+            <p>Muhim sanalar</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-file stat-icon"></i>
+            <h3>{{ user_documents.count }}</h3>
+            <p>Hujjatlar</p>
+        </div>
+    </div>
+    
+    <!-- Tasks -->
+    {% if user_tasks %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-tasks"></i> Vazifalar</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Sarlavha</th>
+                    <th style="padding: 10px;">Holat</th>
+                    <th style="padding: 10px;">Muddati</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in user_tasks %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ task.title }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ task.get_status_display }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ task.deadline|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Notes -->
+    {% if user_notes %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-sticky-note"></i> Eslatmalar</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+            {% for note in user_notes %}
+            <div style="background: var(--glass-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <h4>{{ note.title }}</h4>
+                <p style="font-size: 13px; opacity: 0.7;">{{ note.content|truncatechars:100 }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Ideas -->
+    {% if user_ideas %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-lightbulb"></i> Ideatlar</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+            {% for idea in user_ideas %}
+            <div style="background: var(--glass-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <h4>{{ idea.title }}</h4>
+                <p style="font-size: 13px; opacity: 0.7;">{{ idea.content|truncatechars:100 }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Expenses -->
+    {% if user_expenses %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-wallet"></i> Chiqimlar</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Sarlavha</th>
+                    <th style="padding: 10px;">Summa</th>
+                    <th style="padding: 10px;">Kategoriya</th>
+                    <th style="padding: 10px;">Sana</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in user_expenses %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ expense.title }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ expense.amount }} so'm</td>
+                    <td style="padding: 10px; text-align: center;">{{ expense.get_category_display }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ expense.date|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Important Dates -->
+    {% if user_dates %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-calendar"></i> Muhim sanalar</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Sarlavha</th>
+                    <th style="padding: 10px;">Sana</th>
+                    <th style="padding: 10px;">Turi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for date in user_dates %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ date.title }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ date.date|date:"d.m.Y" }}</td>
+                    <td style="padding: 10px; text-align: center;">{{ date.get_type_display }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Documents -->
+    {% if user_documents %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-file"></i> Hujjatlar</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+            {% for doc in user_documents %}
+            <div style="background: var(--glass-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <i class="fas fa-file document-icon" style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"></i>
+                <h4 style="font-size: 14px;">{{ doc.title }}</h4>
+                <a href="{{ doc.file.url }}" target="_blank" style="font-size: 12px; color: var(--primary);">Yuklab olish</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Links -->
+    {% if user_links %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-link"></i> Havolalar</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Sarlavha</th>
+                    <th style="padding: 10px;">URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for link in user_links %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ link.title }}</td>
+                    <td style="padding: 10px;"><a href="{{ link.url }}" target="_blank" style="color: var(--primary);">{{ link.url|truncatechars:50 }}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Contacts -->
+    {% if user_contacts %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-address-book"></i> Kontaktlar</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Ism</th>
+                    <th style="padding: 10px;">Telefon</th>
+                    <th style="padding: 10px;">Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in user_contacts %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ contact.name }}</td>
+                    <td style="padding: 10px;">{{ contact.phone|default:"-" }}</td>
+                    <td style="padding: 10px;">{{ contact.email|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Gallery -->
+    {% if user_gallery %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-images"></i> Galereya</h3>
+        <div class="gallery-grid">
+            {% for img in user_gallery %}
+            <div class="gallery-item">
+                <img src="{{ img.image.url }}" alt="{{ img.title }}">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Wishlist -->
+    {% if user_wishlist %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-heart"></i> Istiqbol ro'yxati</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Sarlavha</th>
+                    <th style="padding: 10px;">Narx</th>
+                    <th style="padding: 10px;">Holat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for wish in user_wishlist %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ wish.title }}</td>
+                    <td style="padding: 10px;">{{ wish.price|default:"-" }} so'm</td>
+                    <td style="padding: 10px;">
+                        {% if wish.is_purchased %}
+                            <span style="color: var(--success);">Sotib olindi</span>
+                        {% else %}
+                            <span style="color: var(--warning);">Kutilmoqda</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Health Reminders -->
+    {% if user_health %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-heart-pulse"></i> Salomatlik eslatmalari</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Sarlavha</th>
+                    <th style="padding: 10px;">Vaqt</th>
+                    <th style="padding: 10px;">Tur</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for health in user_health %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ health.title }}</td>
+                    <td style="padding: 10px;">{{ health.time }}</td>
+                    <td style="padding: 10px;">
+                        {% if health.is_water %}Suv{% elif health.is_medicine %}Dori{% else %}Boshqa{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Shopping List -->
+    {% if user_shopping %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-shopping-cart"></i> Xaridlar ro'yxati</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Mahsulot</th>
+                    <th style="padding: 10px;">Holat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user_shopping %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ item.item }}</td>
+                    <td style="padding: 10px;">
+                        {% if item.is_purchased %}
+                            <span style="color: var(--success);">Sotib olindi</span>
+                        {% else %}
+                            <span style="color: var(--warning);">Kutilmoqda</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Goals -->
+    {% if user_goals %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-bullseye"></i> Maqsadlar</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Sarlavha</th>
+                    <th style="padding: 10px;">Progress</th>
+                    <th style="padding: 10px;">Muddat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for goal in user_goals %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ goal.title }}</td>
+                    <td style="padding: 10px;">
+                        <div style="background: var(--glass-border); height: 8px; border-radius: 4px;">
+                            <div style="width: {{ goal.progress }}%; background: var(--primary); height: 100%; border-radius: 4px;"></div>
+                        </div>
+                        <span>{{ goal.progress }}%</span>
+                    </td>
+                    <td style="padding: 10px;">{{ goal.target_date|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    
+    <!-- Password Vault -->
+    {% if user_passwords %}
+    <div class="glass-card" style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-key"></i> Parollar ombori</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 10px; text-align: left;">Sarlavha</th>
+                    <th style="padding: 10px;">Foydalanuvchi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for password in user_passwords %}
+                <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <td style="padding: 10px;">{{ password.title }}</td>
+                    <td style="padding: 10px;">{{ password.username|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

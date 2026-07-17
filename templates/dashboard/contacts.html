@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Contacts{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar (Desktop) -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i> Calendar</a></li>
+            <li><a href="{% url 'tasks' %}"><i class="fas fa-tasks"></i> Tasks</a></li>
+            <li><a href="{% url 'notes' %}"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fas fa-money-bill-wave"></i> Expenses</a></li>
+            <li><a href="{% url 'documents' %}"><i class="fas fa-folder"></i> Documents</a></li>
+            <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="{% url 'important_dates' %}"><i class="fas fa-calendar-alt"></i> Important Dates</a></li>
+            <li><a href="{% url 'links' %}"><i class="fas fa-link"></i> Links</a></li>
+            <li><a href="{% url 'contacts' %}" class="active"><i class="fas fa-address-book"></i> Contacts</a></li>
+            <li><a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--primary);"><i class="fas fa-address-book"></i> My Contacts</h2>
+                <button class="btn btn-primary" onclick="showAddContactModal()"><i class="fas fa-plus"></i> Add Contact</button>
+            </div>
+            
+            <div id="contactsList">
+                {% if contacts %}
+                    {% for contact in contacts %}
+                    <div class="contact-item" data-id="{{ contact.id }}" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="color: var(--primary); margin: 0 0 5px 0;">{{ contact.name }}</h3>
+                            {% if contact.phone %}
+                            <p style="color: var(--text); margin: 0; opacity: 0.8;"><i class="fas fa-phone"></i> {{ contact.phone }}</p>
+                            {% endif %}
+                            {% if contact.email %}
+                            <p style="color: var(--text); margin: 0; opacity: 0.8;"><i class="fas fa-envelope"></i> {{ contact.email }}</p>
+                            {% endif %}
+                            {% if contact.telegram %}
+                            <p style="color: var(--text); margin: 0; opacity: 0.8;"><i class="fab fa-telegram"></i> {{ contact.telegram }}</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <button onclick="editContact({{ contact.id }})" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-right: 10px;"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteContact({{ contact.id }})" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="opacity: 0.7; text-align: center; padding: 40px;">No contacts yet. Add your first contact!</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add/Edit Contact Modal -->
+<div id="addContactModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0;"><i class="fas fa-address-book"></i> <span id="contactModalTitle">Add Contact</span></h3>
+            <button onclick="closeAddContactModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addContactForm" method="POST" action="{% url 'add_contact' %}">
+            {% csrf_token %}
+            <input type="hidden" id="contactId" name="contact_id" value="">
+            <div class="form-group">
+                <label for="contactName">Name</label>
+                <input type="text" id="contactName" name="name" required placeholder="Enter contact name...">
+            </div>
+            <div class="form-group">
+                <label for="contactPhone">Phone</label>
+                <input type="text" id="contactPhone" name="phone" placeholder="Enter phone number...">
+            </div>
+            <div class="form-group">
+                <label for="contactTelegram">Telegram</label>
+                <input type="text" id="contactTelegram" name="telegram" placeholder="Enter telegram username...">
+            </div>
+            <div class="form-group">
+                <label for="contactEmail">Email</label>
+                <input type="email" id="contactEmail" name="email" placeholder="Enter email...">
+            </div>
+            <div class="form-group">
+                <label for="contactBirthday">Birthday (optional)</label>
+                <input type="date" id="contactBirthday" name="birthday" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
+            </div>
+            <div class="form-group">
+                <label for="contactNote">Note</label>
+                <textarea id="contactNote" name="note" placeholder="Enter note..." style="width: 100%; height: 80px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; color: var(--text); font-size: 15px; resize: none;"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" onclick="closeAddContactModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Contact</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+    <i class="fas fa-bars"></i>
+</button>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Show add contact modal
+function showAddContactModal() {
+    document.getElementById('contactModalTitle').textContent = 'Add Contact';
+    document.getElementById('addContactForm').action = '{% url "add_contact" %}';
+    document.getElementById('contactId').value = '';
+    document.getElementById('addContactForm').reset();
+    document.getElementById('addContactModal').style.display = 'flex';
+}
+
+// Close add contact modal
+function closeAddContactModal() {
+    document.getElementById('addContactModal').style.display = 'none';
+}
+
+// Edit contact
+function editContact(contactId) {
+    fetch(`/get-contact/${contactId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                document.getElementById('contactModalTitle').textContent = 'Edit Contact';
+                document.getElementById('contactId').value = data.id;
+                document.getElementById('contactName').value = data.name;
+                document.getElementById('contactPhone').value = data.phone || '';
+                document.getElementById('contactTelegram').value = data.telegram || '';
+                document.getElementById('contactEmail').value = data.email || '';
+                document.getElementById('contactBirthday').value = data.birthday || '';
+                document.getElementById('contactNote').value = data.note || '';
+                document.getElementById('addContactForm').action = `/edit-contact/${data.id}/`;
+                showAddContactModal();
+            }
+        });
+}
+
+// Delete contact
+function deleteContact(contactId) {
+    if (confirm('Rostdan ham o\'chirmoqchisiz?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-contact/${contactId}/`;
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

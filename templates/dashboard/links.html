@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}Links{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar (Desktop) -->
+    <nav class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i> Calendar</a></li>
+            <li><a href="{% url 'tasks' %}"><i class="fas fa-tasks"></i> Tasks</a></li>
+            <li><a href="{% url 'notes' %}"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fas fa-money-bill-wave"></i> Expenses</a></li>
+            <li><a href="{% url 'documents' %}"><i class="fas fa-folder"></i> Documents</a></li>
+            <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="{% url 'important_dates' %}"><i class="fas fa-calendar-alt"></i> Important Dates</a></li>
+            <li><a href="{% url 'links' %}" class="active"><i class="fas fa-link"></i> Links</a></li>
+            <li><a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--primary);"><i class="fas fa-link"></i> My Links</h2>
+                <button class="btn btn-primary" onclick="showAddLinkModal()"><i class="fas fa-plus"></i> Add Link</button>
+            </div>
+            
+            <div id="linksList">
+                {% if links %}
+                    {% for link in links %}
+                    <div class="link-item" data-id="{{ link.id }}" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="color: var(--primary); margin: 0 0 5px 0;"><a href="{{ link.url }}" target="_blank" style="text-decoration: none; color: var(--primary);">{{ link.title }}</a></h3>
+                            <p style="color: var(--text); margin: 0; opacity: 0.8; word-break: break-all;">{{ link.url }}</p>
+                            {% if link.category %}
+                            <span style="font-size: 12px; color: var(--text); opacity: 0.6; margin-top: 5px; display: inline-block;">{{ link.category }}</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <button onclick="editLink({{ link.id }})" style="background: none; border: none; color: var(--primary); cursor: pointer; margin-right: 10px;"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteLink({{ link.id }})" style="background: none; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="opacity: 0.7; text-align: center; padding: 40px;">No links yet. Add your first link!</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add/Edit Link Modal -->
+<div id="addLinkModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0;"><i class="fas fa-link"></i> <span id="linkModalTitle">Add Link</span></h3>
+            <button onclick="closeAddLinkModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addLinkForm" method="POST" action="{% url 'add_link' %}">
+            {% csrf_token %}
+            <input type="hidden" id="linkId" name="link_id" value="">
+            <div class="form-group">
+                <label for="linkTitle">Link Title</label>
+                <input type="text" id="linkTitle" name="title" required placeholder="Enter link title...">
+            </div>
+            <div class="form-group">
+                <label for="linkUrl">URL</label>
+                <input type="url" id="linkUrl" name="url" required placeholder="https://example.com">
+            </div>
+            <div class="form-group">
+                <label for="linkCategory">Category (optional)</label>
+                <input type="text" id="linkCategory" name="category" placeholder="Enter category...">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" onclick="closeAddLinkModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Link</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+    <i class="fas fa-bars"></i>
+</button>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Show add link modal
+function showAddLinkModal() {
+    document.getElementById('linkModalTitle').textContent = 'Add Link';
+    document.getElementById('addLinkForm').action = '{% url "add_link" %}';
+    document.getElementById('linkId').value = '';
+    document.getElementById('addLinkForm').reset();
+    document.getElementById('addLinkModal').style.display = 'flex';
+}
+
+// Close add link modal
+function closeAddLinkModal() {
+    document.getElementById('addLinkModal').style.display = 'none';
+}
+
+// Edit link
+function editLink(linkId) {
+    fetch(`/get-link/${linkId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                document.getElementById('linkModalTitle').textContent = 'Edit Link';
+                document.getElementById('linkId').value = data.id;
+                document.getElementById('linkTitle').value = data.title;
+                document.getElementById('linkUrl').value = data.url;
+                document.getElementById('linkCategory').value = data.category || '';
+                document.getElementById('addLinkForm').action = `/edit-link/${data.id}/`;
+                showAddLinkModal();
+            }
+        });
+}
+
+// Delete link
+function deleteLink(linkId) {
+    if (confirm('Rostdan ham o\'chirmoqchisiz?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-link/${linkId}/`;
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

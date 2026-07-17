@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Bosh sahifa{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="padding: 120px 0; text-align: center; color: var(--text); position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, var(--primary), transparent); opacity: 0.1; border-radius: 50%;"></div>
+    <div style="position: absolute; bottom: -150px; left: -150px; width: 400px; height: 400px; background: radial-gradient(circle, var(--secondary), transparent); opacity: 0.1; border-radius: 50%;"></div>
+    
+    <div class="container" style="position: relative; z-index: 1;">
+        <h1 style="font-size: 3.5rem; margin-bottom: 20px; color: var(--primary); font-weight: 800;">
+            LifeHub
+        </h1>
+        <p style="font-size: 1.3rem; margin-bottom: 40px; opacity: 0.8; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Hayotingizni boshqarish platformasi. Vazifalar, xarajatlar, eslatmalar, hujjatlar va boshqalar - barchasi bir joyda!
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'register' %}" class="btn btn-primary btn-glow" style="font-size: 16px; padding: 15px 35px;">
+                <i class="fas fa-rocket"></i> Ro'yxatdan o'tish
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline" style="font-size: 16px; padding: 15px 35px;">
+                <i class="fas fa-sign-in-alt"></i> Kirish
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" style="padding: 100px 0; background: var(--glass-bg); backdrop-filter: blur(20px);">
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem; color: var(--primary);">
+            Imkoniyatlar
+        </h2>
+        <div class="features-grid">
+            <div class="feature-card" style="text-align: center; padding: 30px;">
+                <i class="fas fa-tasks" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 10px;">Vazifalar</h3>
+                <p style="opacity: 0.7;">Rejalar va deadline laringizni boshqaring</p>
+            </div>
+            <div class="feature-card" style="text-align: center; padding: 30px;">
+                <i class="fas fa-money-bill-wave" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 10px;">Xarajatlar</h3>
+                <p style="opacity: 0.7;">Harajatlaringizni kuzating va hisobot oling</p>
+            </div>
+            <div class="feature-card" style="text-align: center; padding: 30px;">
+                <i class="fas fa-calendar" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 10px;">Kalendar</h3>
+                <p style="opacity: 0.7;">Google Calendar uslubida kalendar</p>
+            </div>
+            <div class="feature-card" style="text-align: center; padding: 30px;">
+                <i class="fas fa-file-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 10px;">Hujjatlar</h3>
+                <p style="opacity: 0.7;">Muhim hujjatlaringizni saqlang</p>
+            </div>
+            <div class="feature-card" style="text-align: center; padding: 30px;">
+                <i class="fas fa-bell" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 10px;">Eslatmalar</h3>
+                <p style="opacity: 0.7;">Eslatmalar va bildirishnomalar</p>
+            </div>
+            <div class="feature-card" style="text-align: center; padding: 30px;">
+                <i class="fas fa-chart-bar" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 10px;">Statistika</h3>
+                <p style="opacity: 0.7;">Faoliyatingizni kuzating</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Preview -->
+<section style="padding: 80px 0;">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>10K+</h3>
+                <p>Foydalanuvchilar</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3>50K+</h3>
+                <p>Vazifalar</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>25K+</h3>
+                <p>Hujjatlar</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>4.9</h3>
+                <p>Reyting</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section style="padding: 100px 0; text-align: center; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 20px; margin: 0 20px;">
+    <div class="container">
+        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Hozirroq boshlang!</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">LifeHub bilan hayotingizni tashkillashtiring</p>
+        <a href="{% url 'register' %}" class="btn btn-outline" style="font-size: 16px; padding: 15px 35px; color: white; border-color: white;">
+            <i class="fas fa-user-plus"></i> Ro'yxatdan o'tish
+        </a>
+    </div>
+</section>
+{% endblock %}

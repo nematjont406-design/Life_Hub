@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Admin Panel - Kirish{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-content">
+        <div class="auth-info">
+            <h2><i class="fas fa-crown"></i> Admin Panel</h2>
+            <p>LifeHub boshqaruv paneliga xush kelibsiz. Faqat adminlar kirishi mumkin.</p>
+        </div>
+        <div class="auth-form">
+            <h2>Admin Panelga kirish</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Foydalanuvchi nomi</label>
+                    <input type="text" id="username" name="username" placeholder="Admin foydalanuvchi nomi" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Parol</label>
+                    <input type="password" id="password" name="password" placeholder="Parol" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-sign-in-alt"></i> Kirish</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
