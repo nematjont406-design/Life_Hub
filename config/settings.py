@@ -75,21 +75,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'uz'
-TIME_ZONE = 'Asia/Tashkent'
-USE_I18N = True
-USE_TZ = True
-
+from pathlib import Path
 import os
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL = "/static/"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
-AUTH_USER_MODEL = 'users.User'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-LOGIN_URL = '/admin-panel/login/'
-LOGIN_REDIRECT_URL = '/admin-panel/'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
