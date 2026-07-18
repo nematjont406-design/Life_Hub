@@ -2,7 +2,7 @@
 {% block title %}Settings{% endblock %}
 {% block content %}
 <div class="dashboard">
-    <!-- Sidebar (Desktop) -->
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
     <nav class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -77,8 +77,8 @@
     </main>
 </div>
 
-<!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
     <i class="fas fa-bars"></i>
 </button>
 {% endblock %}

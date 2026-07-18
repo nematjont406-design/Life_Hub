@@ -2,7 +2,7 @@
 {% block title %}Documents{% endblock %}
 {% block content %}
 <div class="dashboard">
-    <!-- Sidebar (Desktop) -->
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
     <nav class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -21,26 +21,26 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2 style="color: var(--primary);"><i class="fas fa-folder"></i> Documents</h2>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                 <button class="btn btn-outline" style="padding: 8px 16px;" onclick="switchDocumentView('grid', event)"><i class="fas fa-th"></i></button>
                 <button class="btn btn-outline" style="padding: 8px 16px;" onclick="switchDocumentView('list', event)"><i class="fas fa-list"></i></button>
                 <button class="btn btn-primary" style="padding: 8px 16px;" onclick="showUploadModal()"><i class="fas fa-upload"></i> Upload</button>
             </div>
         </div>
 
-        <!-- Documents Grid -->
+        <!-- Documents Grid - Responsive -->
         <div class="documents-grid" id="documentsGrid">
             {% if documents %}
                 {% for document in documents %}
                 <div class="document-card" data-id="{{ document.id }}">
-<div class="document-icon">
+                    <div class="document-icon">
                         <i class="fas fa-file"></i>
                     </div>
                     <h4>{{ document.title }}</h4>
                     <p style="font-size: 12px; opacity: 0.6;">{{ document.file.size|filesizeformat }}</p>
-                    <div class="document-actions" style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
+                    <div class="document-actions" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;">
                         <a href="{{ document.file.url }}" target="_blank" class="btn btn-outline" style="padding: 5px 10px; font-size: 12px;" title="View"><i class="fas fa-eye"></i></a>
                         <button onclick="editDocument({{ document.id }})" class="btn btn-outline" style="padding: 5px 10px; font-size: 12px;" title="Edit"><i class="fas fa-edit"></i></button>
                         <button onclick="deleteDocument({{ document.id }})" class="btn btn-outline" style="padding: 5px 10px; font-size: 12px; color: var(--danger);" title="Delete"><i class="fas fa-trash"></i></button>
@@ -54,7 +54,7 @@
     </main>
 </div>
 
-<!-- Upload Document Modal -->
+<!-- Upload Document Modal - Responsive -->
 <div id="uploadDocumentModal" class="modal-overlay" style="display: none;">
     <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -76,7 +76,7 @@
                 <label for="documentFolder">Folder (optional)</label>
                 <input type="text" id="documentFolder" name="folder" placeholder="Enter folder name...">
             </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
                 <button type="button" class="btn btn-outline" onclick="closeUploadModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Upload</button>
             </div>
@@ -84,8 +84,8 @@
     </div>
 </div>
 
-<!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
     <i class="fas fa-bars"></i>
 </button>
 {% endblock %}

@@ -2,7 +2,7 @@
 {% block title %}Notes{% endblock %}
 {% block content %}
 <div class="dashboard">
-    <!-- Sidebar (Desktop) -->
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
     <nav class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -22,9 +22,9 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="notes-container">
-            <!-- Notes Sidebar (Folders) -->
+            <!-- Notes Sidebar (Folders) - Full width on mobile -->
             <div class="notes-sidebar">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                     <h3 style="color: var(--primary);"><i class="fas fa-folder"></i> Folders</h3>
                     <button class="btn btn-primary" style="padding: 8px; width: 36px; height: 36px;" onclick="showAddFolderModal()"><i class="fas fa-plus"></i></button>
                 </div>
@@ -45,11 +45,11 @@
                 </div>
             </div>
 
-            <!-- Notes Editor -->
+            <!-- Notes Editor - Full width on mobile -->
             <div class="notes-editor">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                     <h2 id="currentNoteTitle" style="color: var(--primary);"><i class="fas fa-sticky-note"></i> Select a note</h2>
-                    <div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px;">
                         <button class="btn btn-outline" style="padding: 8px 12px; margin-right: 5px;" onclick="editCurrentNote()"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-outline" style="padding: 8px 12px; margin-right: 5px;" onclick="deleteCurrentNote()"><i class="fas fa-trash"></i></button>
                         <button class="btn btn-primary" style="padding: 8px 16px;" onclick="saveNote()"><i class="fas fa-save"></i> Save</button>
@@ -62,7 +62,7 @@
     </main>
 </div>
 
-<!-- Add Folder Modal -->
+<!-- Add Folder Modal - Responsive -->
 <div id="addFolderModal" class="modal-overlay" style="display: none;">
     <div class="modal-content glass-card" style="max-width: 400px; width: 90%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -74,7 +74,7 @@
                 <label for="folderName">Folder Name</label>
                 <input type="text" id="folderName" name="name" required placeholder="Enter folder name...">
             </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
                 <button type="button" class="btn btn-outline" onclick="closeAddFolderModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Add Folder</button>
             </div>
@@ -82,7 +82,7 @@
     </div>
 </div>
 
-<!-- Add Note Modal -->
+<!-- Add Note Modal - Responsive -->
 <div id="addNoteModal" class="modal-overlay" style="display: none;">
     <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -104,7 +104,7 @@
                 <label for="noteFolder">Folder</label>
                 <input type="text" id="noteFolder" name="folder" value="all" placeholder="Enter folder name...">
             </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
                 <button type="button" class="btn btn-outline" onclick="closeAddNoteModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Add Note</button>
             </div>
@@ -112,8 +112,8 @@
     </div>
 </div>
 
-<!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
     <i class="fas fa-bars"></i>
 </button>
 {% endblock %}

@@ -1,4 +1,11 @@
 // LifeHub - Main JavaScript
+// This website is a productivity platform called LifeHub. Maintain its premium purple theme, 
+// rounded cards, glassmorphism effects, dashboard layout, statistics cards, calendar, 
+// tasks, notes, expenses, reminders, documents, gallery, notifications, profile, settings, 
+// and admin panel. The desktop version should remain almost identical, while the mobile 
+// version should provide a modern app-like experience similar to Notion, Todoist, TickTick, 
+// and Google Keep. Ensure every page is fully responsive and optimized for Android, iPhone, 
+// iPad, laptops, and desktops.
 
 // Mobile menu toggle
 function toggleMenu() {
@@ -393,22 +400,28 @@ function addNote(event) {
 
 // Edit current note
 function editCurrentNote() {
-    const title = document.getElementById('currentNoteTitle').textContent;
-    const content = document.getElementById('noteContent').value;
-    
-    // Populate the add note modal with current content
-    document.getElementById('noteTitle').value = title.replace('Edit', '').trim();
-    document.getElementById('noteText').value = content;
-    
-    showAddNoteModal('all');
+    const noteId = document.getElementById('noteId').value;
+    if (noteId) {
+        viewNote(noteId);
+        document.getElementById('addNoteForm').action = `/edit-note/${noteId}/`;
+        showAddNoteModal();
+    }
 }
 
 // Delete current note
 function deleteCurrentNote() {
-    if (confirm('Rostdan ham o\'chirmoqchisiz?')) {
-        document.getElementById('currentNoteTitle').innerHTML = '<i class="fas fa-sticky-note"></i> Select a note';
-        document.getElementById('noteContent').value = '';
-        showToast('Note deleted!');
+    const noteId = document.getElementById('noteId').value;
+    if (noteId && confirm('Rostdan ham o\'chirmoqchisiz?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-note/${noteId}/`;
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
     }
 }
 
@@ -560,8 +573,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Touch device optimizations - removed preventDefault to allow button clicks
-
 // Mobile-friendly modal handling
 function handleMobileModals() {
     const modals = document.querySelectorAll('.modal-overlay');
@@ -606,3 +617,89 @@ function updateBottomNavActive() {
 document.addEventListener('DOMContentLoaded', function() {
     updateBottomNavActive();
 });
+
+// ===== MOBILE SPECIFIC FUNCTIONS =====
+
+// Mobile theme toggle (for mobile header)
+function toggleMobileTheme() {
+    toggleTheme();
+    const themeIcon = document.querySelector('.theme-btn i');
+    if (themeIcon) {
+        themeIcon.className = document.body.classList.contains('dark-mode') ? 'fas fa-sun' : 'fas fa-moon';
+    }
+}
+
+// Close all open sidebars and menus on mobile
+function closeAllMobileMenus() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.classList.remove('active');
+    }
+}
+
+// Prevent double-tap zoom on buttons (iOS fix)
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('button, .btn');
+    buttons.forEach(btn => {
+        btn.style.touchAction = 'manipulation';
+    });
+});
+
+// Handle mobile form inputs
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        // Prevent zoom on focus for iOS
+        input.addEventListener('focus', function() {
+            if (window.innerWidth <= 768) {
+                const viewport = document.querySelector('meta[name="viewport"]');
+                if (viewport) {
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no');
+                }
+            }
+        });
+        
+        input.addEventListener('blur', function() {
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+            }
+        });
+    });
+});
+
+// Lazy loading for images
+document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        if (!img.hasAttribute('loading')) {
+            img.setAttribute('loading', 'lazy');
+        }
+    });
+});
+
+// Performance optimization - debounce resize events
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction() {
+        const later = () => {
+            clearTimeout(timeout);
+            func();
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Apply debounce to resize handler
+const debouncedResize = debounce(function() {
+    checkResponsive();
+    handleMobileViewport();
+    
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && window.innerWidth > 1024) {
+        sidebar.classList.remove('active');
+    }
+}, 250);
+
+window.addEventListener('resize', debouncedResize);

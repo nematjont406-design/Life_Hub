@@ -2,7 +2,7 @@
 {% block title %}Tasks{% endblock %}
 {% block content %}
 <div class="dashboard">
-    <!-- Sidebar (Desktop) -->
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
     <nav class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -22,13 +22,13 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="glass-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                 <h2 style="color: var(--primary);"><i class="fas fa-tasks"></i> Today's Tasks</h2>
                 <button class="btn btn-primary" onclick="showAddTaskModal()"><i class="fas fa-plus"></i> Add Task</button>
             </div>
             
-            <!-- Task Filters -->
-            <div class="task-filters" style="margin-bottom: 20px;">
+            <!-- Task Filters - Responsive -->
+            <div class="task-filters" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px;">
                 <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;" onclick="filterTasks('all', event)">All</button>
                 <button class="btn btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="filterTasks('today', event)">Today</button>
                 <button class="btn btn-outline" style="padding: 8px 16px; font-size: 14px;" onclick="filterTasks('completed', event)">Completed</button>
@@ -60,7 +60,7 @@
     </main>
 </div>
 
-<!-- Add Task Modal -->
+<!-- Add Task Modal - Responsive -->
 <div id="addTaskModal" class="modal-overlay" style="display: none;">
     <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -90,7 +90,7 @@
                 <label for="taskDate">Due Date</label>
                 <input type="datetime-local" id="taskDate" name="deadline" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
             </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
                 <button type="button" class="btn btn-outline" onclick="closeAddTaskModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Add Task</button>
             </div>
@@ -98,8 +98,8 @@
     </div>
 </div>
 
-<!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
     <i class="fas fa-bars"></i>
 </button>
 {% endblock %}

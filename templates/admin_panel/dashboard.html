@@ -1,8 +1,8 @@
-ga {% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block title %}Admin Panel{% endblock %}
 {% block content %}
 <div class="dashboard">
-    <!-- Sidebar (Desktop) -->
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
     <nav class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fas fa-home"></i> Admin Dashboard</a></li>
@@ -69,3 +69,8 @@ ga {% extends 'base.html' %}
     </div>
 </div>
 {% endblock %}
+
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+    <i class="fas fa-bars"></i>
+</button>

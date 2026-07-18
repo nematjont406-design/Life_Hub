@@ -3,7 +3,7 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <div class="dashboard">
-    <!-- Sidebar (Desktop) -->
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Sidebar ni yashirish">
@@ -36,7 +36,7 @@
             <p>Bugungi sana: {{ today|date:"l, d F Y" }} | Ob-havo ☀️ 24°C</p>
         </div>
 
-        <!-- Stats Grid -->
+        <!-- Stats Grid - Responsive 2x2 on mobile, 4x on desktop -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon"><i class="fas fa-list"></i></div>
@@ -102,35 +102,42 @@
             </div>
         </div>
 
-        <!-- Expenses Chart -->
+        <!-- Expenses Chart - Responsive -->
         <div class="expenses-chart">
             <h3 style="color: var(--primary); margin-bottom: 20px;"><i class="fas fa-chart-pie"></i> Expenses Chart</h3>
-            <div class="expense-item">
-                <div>
-                    <strong>Food</strong>
-                    <div class="expense-bar">
-                        <div class="expense-bar-fill" style="width: 65%;"></div>
+            <div style="display: flex; align-items: center; gap: 30px;">
+                <div style="flex: 1;">
+                    <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(var(--primary) 0% 65%, var(--secondary) 65% 85%, var(--success) 85% 100%); margin: 0 auto;"></div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="expense-item">
+                        <div>
+                            <strong>Food</strong>
+                            <div class="expense-bar">
+                                <div class="expense-bar-fill" style="width: 65%;"></div>
+                            </div>
+                        </div>
+                        <span>65%</span>
+                    </div>
+                    <div class="expense-item">
+                        <div>
+                            <strong>Transport</strong>
+                            <div class="expense-bar">
+                                <div class="expense-bar-fill" style="width: 35%;"></div>
+                            </div>
+                        </div>
+                        <span>35%</span>
+                    </div>
+                    <div class="expense-item">
+                        <div>
+                            <strong>Internet</strong>
+                            <div class="expense-bar">
+                                <div class="expense-bar-fill" style="width: 20%;"></div>
+                            </div>
+                        </div>
+                        <span>20%</span>
                     </div>
                 </div>
-                <span>65%</span>
-            </div>
-            <div class="expense-item">
-                <div>
-                    <strong>Transport</strong>
-                    <div class="expense-bar">
-                        <div class="expense-bar-fill" style="width: 35%;"></div>
-                    </div>
-                </div>
-                <span>35%</span>
-            </div>
-            <div class="expense-item">
-                <div>
-                    <strong>Internet</strong>
-                    <div class="expense-bar">
-                        <div class="expense-bar-fill" style="width: 20%;"></div>
-                    </div>
-                </div>
-                <span>20%</span>
             </div>
         </div>
 
@@ -159,8 +166,8 @@
     </main>
 </div>
 
-<!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
     <i class="fas fa-bars"></i>
 </button>
 {% endblock %}

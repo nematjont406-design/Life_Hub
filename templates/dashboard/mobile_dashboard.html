@@ -8,11 +8,11 @@
         <!-- Header -->
         <header class="mobile-header">
             <div class="header-container">
-                <button class="header-icon hamburger-btn" aria-label="Menu">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="header-logo">LifeHub</div>
-                <button class="header-icon theme-btn" aria-label="Theme">
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
                     <i class="fas fa-moon"></i>
                 </button>
             </div>
@@ -40,19 +40,19 @@
                 <div class="stat-icon-mobile">
                     <i class="fas fa-list-check"></i>
                 </div>
-                <div class="stat-number">12</div>
+                <div class="stat-number">{{ today_tasks|default:"12" }}</div>
             </div>
             <div class="stat-card-mobile">
                 <div class="stat-icon-mobile">
                     <i class="fas fa-fire"></i>
                 </div>
-                <div class="stat-number">8</div>
+                <div class="stat-number">{{ streak|default:"8" }}</div>
             </div>
             <div class="stat-card-mobile">
                 <div class="stat-icon-mobile">
                     <i class="fas fa-calendar-days"></i>
                 </div>
-                <div class="stat-number">5</div>
+                <div class="stat-number">{{ upcoming_reminders|length|default:"5" }}</div>
             </div>
             <div class="stat-card-mobile">
                 <div class="stat-icon-mobile">
@@ -64,17 +64,52 @@
 
         <!-- Schedule Section -->
         <div class="mobile-section schedule-section">
+            <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;"><i class="fas fa-calendar-day"></i> Today's Schedule</h3>
             <div class="section-divider"></div>
+            <div class="task-item" style="padding: 12px;">
+                <span style="font-weight: 600; width: 50px; font-size: 12px;">08:00</span>
+                <span class="task-text" style="font-size: 14px;">Sport</span>
+            </div>
             <div class="section-divider"></div>
+            <div class="task-item" style="padding: 12px;">
+                <span style="font-weight: 600; width: 50px; font-size: 12px;">10:00</span>
+                <span class="task-text" style="font-size: 14px;">Work</span>
+            </div>
             <div class="section-divider"></div>
+            <div class="task-item" style="padding: 12px;">
+                <span style="font-weight: 600; width: 50px; font-size: 12px;">14:00</span>
+                <span class="task-text" style="font-size: 14px;">University</span>
+            </div>
             <div class="section-divider"></div>
         </div>
 
         <!-- Tasks Section -->
         <div class="mobile-section tasks-section">
+            <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;"><i class="fas fa-list"></i> Today's Tasks</h3>
             <div class="section-divider"></div>
+            <div class="task-item" style="padding: 12px;">
+                <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                <span class="task-text" style="font-size: 14px;">Wake up</span>
+                <span class="task-priority priority-low" style="font-size: 11px;">Low</span>
+            </div>
             <div class="section-divider"></div>
+            <div class="task-item" style="padding: 12px;">
+                <div class="task-checkbox checked" onclick="toggleTask(this)"><i class="fas fa-check" style="font-size: 10px; color: white;"></i></div>
+                <span class="task-text" style="font-size: 14px;">Study Django</span>
+                <span class="task-priority priority-high" style="font-size: 11px;">High</span>
+            </div>
             <div class="section-divider"></div>
+            <div class="task-item" style="padding: 12px;">
+                <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                <span class="task-text" style="font-size: 14px;">Gym</span>
+                <span class="task-priority priority-medium" style="font-size: 11px;">Medium</span>
+            </div>
+            <div class="section-divider"></div>
+            <div class="task-item" style="padding: 12px;">
+                <div class="task-checkbox" onclick="toggleTask(this)"></div>
+                <span class="task-text" style="font-size: 14px;">Buy Milk</span>
+                <span class="task-priority priority-low" style="font-size: 11px;">Low</span>
+            </div>
             <div class="section-divider"></div>
         </div>
     </div>
@@ -94,4 +129,30 @@
         </div>
     </nav>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile-specific initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Update theme icon based on saved preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        const themeIcon = document.querySelector('.theme-btn i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+    
+    // Add touch feedback to task items
+    const taskItems = document.querySelectorAll('.task-item');
+    taskItems.forEach(item => {
+        item.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        item.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+    });
+});
+</script>
 {% endblock %}

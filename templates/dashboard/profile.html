@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}b kira
 {% block title %}Profile{% endblock %}
 {% block content %}
 <div class="dashboard">
-    <!-- Sidebar (Desktop) -->
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
     <nav class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -21,7 +21,7 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Profile Header -->
+        <!-- Profile Header - Responsive -->
         <div class="profile-header">
             <div class="profile-avatar-container">
                 {% if user.avatar %}
@@ -42,7 +42,7 @@
             {% endif %}
         </div>
 
-        <!-- Stats -->
+        <!-- Stats - Responsive 2x2 on mobile -->
         <div class="stats-grid" style="margin-bottom: 20px;">
             <div class="stat-card">
                 <h3>{{ user.task_set.count }}</h3>
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <!-- Profile Edit Form -->
+        <!-- Profile Edit Form - Responsive -->
         <div class="settings-list" style="margin-bottom: 20px;">
             <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-user-edit"></i> Profilni tahrirlash</h3>
             
@@ -68,34 +68,34 @@
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="first_name" style="display: block; margin-bottom: 5px; color: var(--text);">Ism</label>
-                    <input type="text" id="first_name" name="first_name" class="form-control" value="{{ user.first_name }}" placeholder="Ismingiz" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                    <input type="text" id="first_name" name="first_name" class="form-control" value="{{ user.first_name }}" placeholder="Ismingiz" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
                 </div>
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="last_name" style="display: block; margin-bottom: 5px; color: var(--text);">Familiya</label>
-                    <input type="text" id="last_name" name="last_name" class="form-control" value="{{ user.last_name }}" placeholder="Familiyangiz" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                    <input type="text" id="last_name" name="last_name" class="form-control" value="{{ user.last_name }}" placeholder="Familiyangiz" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
                 </div>
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="email" style="display: block; margin-bottom: 5px; color: var(--text);">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" placeholder="Email manzilingiz" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                    <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" placeholder="Email manzilingiz" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
                 </div>
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="phone" style="display: block; margin-bottom: 5px; color: var(--text);">Telefon</label>
-                    <input type="tel" id="phone" name="phone" class="form-control" value="{{ user.phone|default:'' }}" placeholder="Telefon raqamingiz" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                    <input type="tel" id="phone" name="phone" class="form-control" value="{{ user.phone|default:'' }}" placeholder="Telefon raqamingiz" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
                 </div>
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="bio" style="display: block; margin-bottom: 5px; color: var(--text);">Biografiya</label>
-                    <textarea id="bio" name="bio" class="form-control" placeholder="O'zingiz haqingizda..." rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">{{ user.bio|default:'' }}</textarea>
+                    <textarea id="bio" name="bio" class="form-control" placeholder="O'zingiz haqingizda..." rows="3" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">{{ user.bio|default:'' }}</textarea>
                 </div>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-save"></i> Saqlash</button>
             </form>
         </div>
-
-        <!-- Password Change Form -->
+        
+        <!-- Password Change Form - Responsive -->
         <div class="settings-list" style="margin-bottom: 20px;">
             <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-key"></i> Parolni o'zgartirish</h3>
             
@@ -104,24 +104,24 @@
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="old_password" style="display: block; margin-bottom: 5px; color: var(--text);">Joriy parol</label>
-                    <input type="password" id="old_password" name="old_password" class="form-control" placeholder="Joriy parolingiz" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                    <input type="password" id="old_password" name="old_password" class="form-control" placeholder="Joriy parolingiz" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
                 </div>
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="new_password1" style="display: block; margin-bottom: 5px; color: var(--text);">Yangi parol</label>
-                    <input type="password" id="new_password1" name="new_password1" class="form-control" placeholder="Yangi parol" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                    <input type="password" id="new_password1" name="new_password1" class="form-control" placeholder="Yangi parol" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
                 </div>
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="new_password2" style="display: block; margin-bottom: 5px; color: var(--text);">Yangi parolni tasdiqlang</label>
-                    <input type="password" id="new_password2" name="new_password2" class="form-control" placeholder="Yangi parolni qayta kiriting" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                    <input type="password" id="new_password2" name="new_password2" class="form-control" placeholder="Yangi parolni qayta kiriting" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
                 </div>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-key"></i> Parolni o'zgartirish</button>
             </form>
         </div>
-
-        <!-- Menu Items -->
+        
+        <!-- Menu Items - Responsive -->
         <div class="settings-list" style="margin-bottom: 20px;">
             <a href="{% url 'tasks' %}" class="settings-item" style="text-decoration: none; color: var(--text);">
                 <div>
@@ -152,14 +152,14 @@
                 <i class="fas fa-chevron-right"></i>
             </a>
         </div>
-
+        
         <!-- Logout Button -->
         <a href="{% url 'logout' %}" onclick="return confirmLogout()" class="btn btn-outline" style="width: 100%;"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </main>
 </div>
 
-<!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
     <i class="fas fa-bars"></i>
 </button>
 

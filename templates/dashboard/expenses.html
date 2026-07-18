@@ -2,7 +2,7 @@
 {% block title %}Expenses{% endblock %}
 {% block content %}
 <div class="dashboard">
-    <!-- Sidebar (Desktop) -->
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
     <nav class="sidebar" id="sidebar">
         <ul class="sidebar-menu">
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
@@ -21,21 +21,25 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2 style="color: var(--primary);"><i class="fas fa-money-bill-wave"></i> 💰 Expenses</h2>
-            <button class="btn btn-primary" onclick="showAddExpenseModal()"><i class="fas fa-plus"></i> Add Expense</button>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <button class="btn btn-outline" style="padding: 8px 16px;" onclick="switchDocumentView('grid', event)"><i class="fas fa-th"></i></button>
+                <button class="btn btn-outline" style="padding: 8px 16px;" onclick="switchDocumentView('list', event)"><i class="fas fa-list"></i></button>
+                <button class="btn btn-primary" style="padding: 8px 16px;" onclick="showAddExpenseModal()"><i class="fas fa-plus"></i> Add Expense</button>
+            </div>
         </div>
 
-        <!-- Expenses Chart -->
+        <!-- Expenses Chart - Responsive -->
         <div class="expenses-chart" style="margin-bottom: 20px;">
             <h3 style="color: var(--primary); margin-bottom: 20px;"><i class="fas fa-chart-pie"></i> Expenses Chart</h3>
             
-            <!-- Pie Chart Visualization -->
-            <div style="display: flex; align-items: center; gap: 30px;">
-                <div style="flex: 1;">
+            <!-- Pie Chart Visualization - Stacked on mobile -->
+            <div style="display: flex; align-items: center; gap: 30px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 150px; text-align: center;">
                     <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(var(--primary) 0% 65%, var(--secondary) 65% 85%, var(--success) 85% 100%); margin: 0 auto;"></div>
                 </div>
-                <div style="flex: 1;">
+                <div style="flex: 1; min-width: 200px;">
                     <div class="expense-item">
                         <div>
                             <strong>Food</strong>
@@ -67,42 +71,42 @@
             </div>
         </div>
 
-        <!-- Bar Chart -->
+        <!-- Bar Chart - Responsive -->
         <div class="glass-card" style="margin-bottom: 20px;">
             <h3 style="color: var(--primary); margin-bottom: 20px;"><i class="fas fa-chart-bar"></i> Monthly Expenses</h3>
-            <div style="display: flex; align-items: flex-end; gap: 15px; height: 200px;">
-                <div style="flex: 1; text-align: center;">
+            <div style="display: flex; align-items: flex-end; gap: 10px; height: 200px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 30px; text-align: center;">
                     <div style="background: var(--primary); height: 120px; border-radius: 8px 8px 0 0;"></div>
-                    <span style="font-size: 12px; opacity: 0.7;">Jan</span>
+                    <span style="font-size: 10px; opacity: 0.7;">Jan</span>
                 </div>
-                <div style="flex: 1; text-align: center;">
+                <div style="flex: 1; min-width: 30px; text-align: center;">
                     <div style="background: var(--primary); height: 80px; border-radius: 8px 8px 0 0;"></div>
-                    <span style="font-size: 12px; opacity: 0.7;">Feb</span>
+                    <span style="font-size: 10px; opacity: 0.7;">Feb</span>
                 </div>
-                <div style="flex: 1; text-align: center;">
+                <div style="flex: 1; min-width: 30px; text-align: center;">
                     <div style="background: var(--primary); height: 150px; border-radius: 8px 8px 0 0;"></div>
-                    <span style="font-size: 12px; opacity: 0.7;">Mar</span>
+                    <span style="font-size: 10px; opacity: 0.7;">Mar</span>
                 </div>
-                <div style="flex: 1; text-align: center;">
+                <div style="flex: 1; min-width: 30px; text-align: center;">
                     <div style="background: var(--primary); height: 100px; border-radius: 8px 8px 0 0;"></div>
-                    <span style="font-size: 12px; opacity: 0.7;">Apr</span>
+                    <span style="font-size: 10px; opacity: 0.7;">Apr</span>
                 </div>
-                <div style="flex: 1; text-align: center;">
+                <div style="flex: 1; min-width: 30px; text-align: center;">
                     <div style="background: var(--primary); height: 180px; border-radius: 8px 8px 0 0;"></div>
-                    <span style="font-size: 12px; opacity: 0.7;">May</span>
+                    <span style="font-size: 10px; opacity: 0.7;">May</span>
                 </div>
-                <div style="flex: 1; text-align: center;">
+                <div style="flex: 1; min-width: 30px; text-align: center;">
                     <div style="background: var(--primary); height: 160px; border-radius: 8px 8px 0 0;"></div>
-                    <span style="font-size: 12px; opacity: 0.7;">Jun</span>
+                    <span style="font-size: 10px; opacity: 0.7;">Jun</span>
                 </div>
-                <div style="flex: 1; text-align: center;">
+                <div style="flex: 1; min-width: 30px; text-align: center;">
                     <div style="background: var(--secondary); height: 200px; border-radius: 8px 8px 0 0;"></div>
-                    <span style="font-size: 12px; opacity: 0.7;">Jul</span>
+                    <span style="font-size: 10px; opacity: 0.7;">Jul</span>
                 </div>
             </div>
         </div>
 
-<!-- Recent Expenses -->
+        <!-- Recent Expenses -->
         <div class="glass-card">
             <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-history"></i> Recent Expenses</h3>
             {% if expenses %}
@@ -126,52 +130,52 @@
     </main>
 </div>
 
-<!-- Add Expense Modal -->
-    <div id="addExpenseModal" class="modal-overlay" style="display: none;">
-        <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="color: var(--primary); margin: 0;"><i class="fas fa-plus"></i> Add New Expense</h3>
-                <button onclick="closeAddExpenseModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
-            </div>
-            <form id="addExpenseForm" method="POST" action="{% url 'add_expense' %}">
-                {% csrf_token %}
-                <input type="hidden" id="expenseId" name="expense_id" value="">
-                <div class="form-group">
-                    <label for="expenseTitle">Expense Title</label>
-                    <input type="text" id="expenseTitle" name="title" required placeholder="Enter expense title...">
-                </div>
-                <div class="form-group">
-                    <label for="expenseAmount">Amount</label>
-                    <input type="number" id="expenseAmount" name="amount" required placeholder="Enter amount...">
-                </div>
-                <div class="form-group">
-                    <label for="expenseCategory">Category</label>
-                    <select id="expenseCategory" name="category" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
-                        <option value="food">Food</option>
-                        <option value="transport">Transport</option>
-                        <option value="home">Home</option>
-                        <option value="internet">Internet</option>
-                        <option value="clothes">Clothes</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="expenseDate">Date</label>
-                    <input type="date" id="expenseDate" name="date" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
-                </div>
-                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-                    <button type="button" class="btn btn-outline" onclick="closeAddExpenseModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Expense</button>
-                </div>
-            </form>
+<!-- Add Expense Modal - Responsive -->
+<div id="addExpenseModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 500px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0;"><i class="fas fa-plus"></i> Add New Expense</h3>
+            <button onclick="closeAddExpenseModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
         </div>
+        <form id="addExpenseForm" method="POST" action="{% url 'add_expense' %}">
+            {% csrf_token %}
+            <input type="hidden" id="expenseId" name="expense_id" value="">
+            <div class="form-group">
+                <label for="expenseTitle">Expense Title</label>
+                <input type="text" id="expenseTitle" name="title" required placeholder="Enter expense title...">
+            </div>
+            <div class="form-group">
+                <label for="expenseAmount">Amount</label>
+                <input type="number" id="expenseAmount" name="amount" required placeholder="Enter amount...">
+            </div>
+            <div class="form-group">
+                <label for="expenseCategory">Category</label>
+                <select id="expenseCategory" name="category" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="home">Home</option>
+                    <option value="internet">Internet</option>
+                    <option value="clothes">Clothes</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="expenseDate">Date</label>
+                <input type="date" id="expenseDate" name="date" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text); font-size: 15px;">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline" onclick="closeAddExpenseModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Expense</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" onclick="toggleSidebar()" style="position: fixed; top: 80px; left: 20px; z-index: 98;">
-        <i class="fas fa-bars"></i>
-    </button>
-    {% endblock %}
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+    <i class="fas fa-bars"></i>
+</button>
+{% endblock %}
 
 {% block extra_js %}
 <script>

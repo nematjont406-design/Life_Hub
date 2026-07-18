@@ -2,7 +2,8 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <!-- Responsive viewport - allows proper scaling on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#6D5DF6">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Top Navbar (Desktop/Tablet) -->
+    <!-- Top Navbar (Desktop/Tablet) - Hidden on mobile -->
     <nav class="top-navbar">
         <div class="navbar-container">
             <span class="logo" style="cursor: default; pointer-events: none; font-weight: 700; font-size: 1.5rem; color: #4f46e5;">{% if site_settings %}{{ site_settings.site_name }}{% else %}LifeHub{% endif %}</span>
@@ -33,7 +34,7 @@
 
     {% block content %}{% endblock %}
 
-    <!-- Bottom Navigation (Mobile) -->
+    <!-- Bottom Navigation (Tablet) - Hidden on mobile and desktop -->
     <nav class="bottom-nav">
         <ul class="bottom-nav-menu">
             <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-home"></i><span>Home</span></a></li>
@@ -44,22 +45,40 @@
     <script src="/static/js/main.js"></script>
     {% block extra_js %}{% endblock %}
     <script>
-        // Theme toggle
+        // Theme toggle - preserves user preference
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const icon = document.querySelector('.navbar-actions button[title="Tema"] i');
             if (document.body.classList.contains('dark-mode')) {
                 icon.className = 'fas fa-sun';
+                localStorage.setItem('darkMode', 'true');
             } else {
                 icon.className = 'fas fa-moon';
+                localStorage.setItem('darkMode', 'false');
             }
         }
         
-        // Mobile menu toggle
+        // Mobile menu toggle - handles sidebar on tablet/mobile
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             if (sidebar) {
-                sidebar.classList.toggle('active');
+                // Check if we're on mobile (sidebar has 'active' class for mobile)
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.toggle('active');
+                } else {
+                    // Desktop: toggle collapsed state
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Update button icon
+                    const toggleBtn = sidebar.querySelector('.sidebar-toggle-btn i');
+                    if (toggleBtn) {
+                        if (sidebar.classList.contains('collapsed')) {
+                            toggleBtn.className = 'fas fa-chevron-right';
+                        } else {
+                            toggleBtn.className = 'fas fa-chevron-left';
+                        }
+                    }
+                }
             }
         }
         
@@ -67,6 +86,17 @@
         function confirmLogout() {
             return confirm('Rostdan ham chiqmoqchisiz?');
         }
+        
+        // Check saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                const icon = document.querySelector('.navbar-actions button[title="Tema"] i');
+                if (icon) {
+                    icon.className = 'fas fa-sun';
+                }
+            }
+        });
     </script>
 </body>
 </html>
