@@ -86,6 +86,10 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
+def mobile_dashboard(request):
+    return render(request, 'dashboard/mobile_dashboard.html')
+
+@login_required
 def calendar_view(request):
     user = request.user
     important_dates = ImportantDate.objects.filter(user=user).order_by('date')

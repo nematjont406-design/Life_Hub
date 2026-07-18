@@ -515,14 +515,10 @@ function clearAllNotifications() {
 
 // Handle mobile viewport changes
 function handleMobileViewport() {
-    // Prevent zoom on input focus (iOS)
+    // Ensure proper viewport for mobile
     const viewport = document.querySelector('meta[name="viewport"]');
     if (viewport) {
-        if (window.innerWidth <= 768) {
-            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-        } else {
-            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-        }
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
     }
 }
 
@@ -564,12 +560,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Prevent double-tap zoom on buttons
-document.addEventListener('touchstart', function(e) {
-    if (e.target.closest('.btn, .navbar-actions button, .sidebar-menu a, .bottom-nav-menu a')) {
-        e.preventDefault();
-    }
-}, { passive: false });
+// Touch device optimizations - removed preventDefault to allow button clicks
 
 // Mobile-friendly modal handling
 function handleMobileModals() {

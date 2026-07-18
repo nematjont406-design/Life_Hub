@@ -16,8 +16,9 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     
-    # Dashboard
+# Dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('mobile-dashboard/', views.mobile_dashboard, name='mobile_dashboard'),
     path('calendar/', views.calendar_view, name='calendar'),
     path('tasks/', views.tasks_view, name='tasks'),
     path('notes/', views.notes_view, name='notes'),

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Mobile Dashboard{% endblock %}
+{% block content %}
+<!-- Mobile Dashboard - iPhone 16 Pro Style (390x844) -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">LifeHub</div>
+                <button class="header-icon theme-btn" aria-label="Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="mobile-search-container">
+            <div class="mobile-search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search..." class="mobile-search-input">
+            </div>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="mobile-welcome-card">
+            <div class="welcome-content">
+                <h2 class="welcome-title">Good Morning!</h2>
+                <p class="welcome-subtitle">Productivity is the key to success</p>
+            </div>
+        </div>
+
+        <!-- Stats Grid 2x2 -->
+        <div class="mobile-stats-grid">
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <div class="stat-number">12</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-number">8</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-calendar-days"></i>
+                </div>
+                <div class="stat-number">5</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-number">94%</div>
+            </div>
+        </div>
+
+        <!-- Schedule Section -->
+        <div class="mobile-section schedule-section">
+            <div class="section-divider"></div>
+            <div class="section-divider"></div>
+            <div class="section-divider"></div>
+            <div class="section-divider"></div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="mobile-section tasks-section">
+            <div class="section-divider"></div>
+            <div class="section-divider"></div>
+            <div class="section-divider"></div>
+            <div class="section-divider"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item active">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'add' %}" class="bottom-nav-item">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+{% endblock %}

@@ -2,20 +2,22 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <meta name="theme-color" content="#6D5DF6">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
     <title>{% if site_settings %}{{ site_settings.site_name }}{% else %}LifeHub{% endif %} - {% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/lifehub.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/lifehub.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Top Navbar -->
+    <!-- Top Navbar (Desktop/Tablet) -->
     <nav class="top-navbar">
-<div class="navbar-container">
+        <div class="navbar-container">
             <span class="logo" style="cursor: default; pointer-events: none; font-weight: 700; font-size: 1.5rem; color: #4f46e5;">{% if site_settings %}{{ site_settings.site_name }}{% else %}LifeHub{% endif %}</span>
             
             <div class="search-box">
@@ -24,9 +26,7 @@
             </div>
             
             <div class="navbar-actions">
-                <button title="Bildirishnomalar"><i class="fas fa-bell"></i></button>
                 <button title="Tema" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
-                <button title="Profil"><i class="fas fa-user"></i></button>
             </div>
         </div>
     </nav>
@@ -37,10 +37,7 @@
     <nav class="bottom-nav">
         <ul class="bottom-nav-menu">
             <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-home"></i><span>Home</span></a></li>
-            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i><span>Calendar</span></a></li>
             <li><a href="{% url 'add' %}"><i class="fas fa-plus"></i><span>Add</span></a></li>
-            <li><a href="{% url 'notifications' %}"><i class="fas fa-bell"></i><span>Alerts</span></a></li>
-            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i><span>Profile</span></a></li>
         </ul>
     </nav>
 
