@@ -86,6 +86,14 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
+def ai_assistant_view(request):
+    return render(request, 'dashboard/ai_assistant.html')
+
+@login_required
+def mobile_ai_assistant_view(request):
+    return render(request, 'dashboard/mobile_ai_assistant.html')
+
+@login_required
 def mobile_dashboard(request):
     return render(request, 'dashboard/mobile_dashboard.html')
 
@@ -532,14 +540,13 @@ def delete_special_date(request, date_id):
 # Search special dates
 @login_required
 def search_special_dates(request):
+    from django.db.models import Q
     query = request.GET.get('q', '')
     if query:
         dates = ImportantDate.objects.filter(
-            user=request.user,
-            title__icontains=query
-        ) | ImportantDate.objects.filter(
-            user=request.user,
-            description__icontains=query
+            user=request.user
+        ).filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
         )
     else:
         dates = ImportantDate.objects.filter(user=request.user)
@@ -549,9 +556,9 @@ def search_special_dates(request):
         results.append({
             'id': date.id,
             'title': date.title,
-            'description': date.description,
+            'description': date.description or '',
             'date': date.date.strftime('%Y-%m-%d'),
-            'time': date.time.strftime('%H:%M') if date.time else None,
+            'time': date.time.strftime('%H:%M') if date.time else '',
             'type': date.get_type_display(),
             'emoji': date.emoji,
         })
@@ -811,6 +818,53 @@ def get_contact(request, contact_id):
         return JsonResponse(data)
     except Contact.DoesNotExist:
         return JsonResponse({'error': 'Contact not found'}, status=404)
+
+# AI Chat endpoint
+@login_required
+def ai_chat(request):
+    if request.method == 'POST':
+        import json
+        data = json.loads(request.body)
+        message = data.get('message', '')
+        
+        # Simple AI response logic (can be enhanced with actual AI integration)
+        response = get_ai_response(message)
+        
+        return JsonResponse({'response': response})
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def get_ai_response(message):
+    """Simple AI response generator - can be replaced with actual AI API"""
+    message_lower = message.lower()
+    
+    # Task-related responses
+    if 'task' in message_lower or 'vazifa' in message_lower or 'reja' in message_lower:
+        return "Sizga vazifalarni tartiblashda yordam bera olaman! Eslatma: Har bir vazifaga prioritet belgilang va muddatini ko'rsating. Bugun qaysi vazifalarni bajarish kerak?"
+    
+    # Expense-related responses
+    elif 'xarajat' in message_lower or 'expense' in message_lower or 'pul' in message_lower:
+        return "Xarajatlaringizni tahlil qilishni xohlaysizmi? Men sizga xarajatlarni kategoriyalash va tejash bo'yicha maslahat beraiman. Qaysi kategoriya xarajatlari sizni qiziqtiryapti?"
+    
+    # Study-related responses
+    elif 'o\'qish' in message_lower or 'study' in message_lower:
+        return "O'qish rejasini tuzishdan mamnunman! Quyidagi tavsiyalarni bajarishingiz mumkin:\n1. Mavzularni tushunish uchun oldadan reja tuzing\n2. Har kuni 2-3 soat muntazam o'qish vaqti belgilang\n3. O'zlashtirgan mavzularni amalga o'tkazish uyg'otkich sifatida qabul qiling\n4. O'qishdan keyin qisqacha tushintirish yozing"
+    
+    # Health-related responses
+    elif 'sog\'lom' in message_lower or 'health' in message_lower or 'uyqu' in message_lower:
+        return "Sog'lom odatlar juda muhim! Kundalik rejangizda quyidagi tavsiyalarni inobatga olish mumkin:\n- Ertalab 10-15 daqiqa jismoniy mashg'ulot\n- Kun davomiida 2-3 marta qisqa dam olish\n- 22:00 dan oldin ekran vaqtni cheklang\n- Kuniga kamida 2 litr suv iching"
+    
+    # Motivation
+    elif 'motivatsiya' in message_lower or 'motivation' in message_lower:
+        return "Hech qachon bomaslikka yo'l bermang! Har bir kichik qadam katta marta bilan birga yetishadi. Bugungi kichik maqsadni aniqlab, uni amalga oshiring. Siz qila olasiz! 💪"
+    
+    # Calendar/schedule
+    elif 'calendar' in message_lower or 'taklif' in message_lower or 'jadval' in message_lower:
+        return "Taqvim va rejalashtirish! Bugungi sana: " + str(timezone.now().date()) + ". Siz uchun bugungi rejamni tuzishimni xohlaysizmi? Quyidagi vazifalarni kelmadi:"
+    
+    # Default response
+    else:
+        return "Assalomu alaykum! Men LifeHub AI. Sizga quyidagi mavzularda yordam bera olaman:\n- Vazifalarni tartiblash\n- Xarajatlarni tahlil qilish\n- O'qish rejalashtirish\n- Sog'lom odatlar tavsiyalari\n- Motivatsiya berish\n\nQaysi mavzu bo'yicha maslahat kerak?"
 
 # Logout
 def logout_view(request):

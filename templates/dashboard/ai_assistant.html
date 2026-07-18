@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}LifeHub AI{% endblock %}
+{% block content %}
+<!-- Desktop AI Assistant -->
+<div class="dashboard">
+    <!-- Sidebar (Desktop) - Collapses to hamburger on mobile/tablet -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Sidebar ni yashirish">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        <div style="padding: 15px 20px; margin-bottom: 10px;">
+            <a href="{% url 'ai_assistant' %}" style="color: var(--primary); font-weight: 700; font-size: 18px; text-decoration: none;">✨ LifeHub AI</a>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'calendar' %}"><i class="fas fa-calendar"></i> Calendar</a></li>
+            <li><a href="{% url 'tasks' %}"><i class="fas fa-tasks"></i> Tasks</a></li>
+            <li><a href="{% url 'notes' %}"><i class="fas fa-sticky-note"></i> Notes</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fas fa-money-bill-wave"></i> Expenses</a></li>
+            <li><a href="{% url 'documents' %}"><i class="fas fa-folder"></i> Documents</a></li>
+            <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="{% url 'notifications' %}"><i class="fas fa-bell"></i> Notifications</a></li>
+            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'logout' %}" onclick="return confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="ai-assistant-container">
+            <!-- AI Header -->
+            <div class="ai-header">
+                <h1 class="ai-title">✨ LifeHub AI</h1>
+                <p class="ai-description">Assalomu alaykum! Men sizning shaxsiy AI yordamchingizman. Sizga rejalashtirish, vazifalarni tartiblash, xarajatlarni tahlil qilish va maslahat berishda yordam beraman.</p>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="ai-quick-actions">
+                <button class="ai-action-btn" onclick="sendQuickMessage('Bugungi rejamni tuz')"><span>📅</span> Bugungi rejamni tuz</button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Vazifalarimni tartibla')"><span>✅</span> Vazifalarimni tartibla</button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Xarajatlarimni tahlil qil')"><span>💰</span> Xarajatlarimni tahlil qil</button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Maqsadlarim bo\'yicha maslahat ber')"><span>🎯</span> Maqsadlarim bo'yicha maslahat ber</button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('O\'qish rejasini tuz')"><span>📖</span> O'qish rejasini tuz</button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Sog\'lom odatlar tavsiya qil')"><span>🏃</span> Sog'lom odatlar tavsiya qil</button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Uyqu jadvalini tuz')"><span>😴</span> Uyqu jadvalini tuz</button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Motivatsiya ber')"><span>💡</span> Motivatsiya ber</button>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="ai-chat-container">
+                <div class="ai-chat-messages" id="aiChatMessages">
+                    <!-- Welcome message -->
+                    <div class="ai-message ai-message-bot">
+                        <div class="ai-message-content">
+                            <p>Assalomu alaykum! Men LifeHub AI. Sizga qanday yordam bera olaman? 😊</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="ai-chat-input-container">
+                    {% csrf_token %}
+                    <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="Xabaringizni kiriting..." autocomplete="off">
+                    <button class="ai-send-btn" onclick="sendMessage()" id="aiSendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Mobile AI Assistant - iPhone 16 Pro Style -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">✨ LifeHub AI</div>
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="mobile-search-container">
+            <div class="mobile-search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="AI yordamida qidirish..." class="mobile-search-input" id="mobileAiSearch">
+            </div>
+        </div>
+
+        <!-- AI Header -->
+        <div class="mobile-welcome-card" style="margin: 0 20px 20px;">
+            <div class="welcome-content">
+                <h2 class="welcome-title">Assalomu alaykum! 👋</h2>
+                <p class="welcome-subtitle">Men sizning shaxsiy AI yordamchingizman. Sizga qanday yordam bera olaman?</p>
+            </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div style="padding: 0 20px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                <button class="ai-action-btn" onclick="sendQuickMessage('Bugungi rejamni tuz')" style="padding: 12px; font-size: 13px;">
+                    <span>📅</span> Bugungi rejam
+                </button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Vazifalarimni tartibla')" style="padding: 12px; font-size: 13px;">
+                    <span>✅</span> Vazifalarni tartibla
+                </button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Xarajatlarimni tahlil qil')" style="padding: 12px; font-size: 13px;">
+                    <span>💰</span> Xarajatlarni tahlil
+                </button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Maqsadlarim bo\'yicha maslahat ber')" style="padding: 12px; font-size: 13px;">
+                    <span>🎯</span> Maqsadlar
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="mobile-ai-chat">
+            <div class="ai-chat-messages" id="aiChatMessages">
+                <!-- Welcome message -->
+                <div class="ai-message ai-message-bot">
+                    <div class="ai-message-content">
+                        <p>Assalomu alaykum! Men LifeHub AI. Sizga qanday yordam bera olaman? 😊</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="ai-chat-input-container">
+                {% csrf_token %}
+                <input type="text" id="aiChatInput" class="ai-chat-input" placeholder="Xabaringizni kiriting..." autocomplete="off">
+                <button class="ai-send-btn" onclick="sendMessage()" id="aiSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'ai_assistant' %}" class="bottom-nav-item active">
+                <i class="fas fa-robot"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!-- Mobile Menu Button - Visible on tablet/mobile -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+    <i class="fas fa-bars"></i>
+</button>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ai-assistant.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+ <script src="{% static 'js/ai-assistant.js' %}"></script>
+ <script>
+ // Mobile-specific initialization
+ document.addEventListener('DOMContentLoaded', function() {
+     // Update theme icon based on saved preference
+     if (localStorage.getItem('darkMode') === 'true') {
+         const themeIcon = document.querySelector('.theme-btn i');
+         if (themeIcon) {
+             themeIcon.className = 'fas fa-sun';
+         }
+     }
+ });
+ </script>
+ {% endblock %}

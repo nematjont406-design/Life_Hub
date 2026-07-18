@@ -19,6 +19,8 @@ urlpatterns = [
 # Dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
     path('mobile-dashboard/', views.mobile_dashboard, name='mobile_dashboard'),
+    path('ai-assistant/', views.ai_assistant_view, name='ai_assistant'),
+    path('mobile-ai-assistant/', views.mobile_ai_assistant_view, name='mobile_ai_assistant'),
     path('calendar/', views.calendar_view, name='calendar'),
     path('tasks/', views.tasks_view, name='tasks'),
     path('notes/', views.notes_view, name='notes'),
@@ -88,6 +90,9 @@ urlpatterns = [
     
     # Profile
     path('change-password/', views.change_password, name='change_password'),
+    
+# AI Chat endpoint
+    path('ai-chat/', views.ai_chat, name='ai_chat'),
     
     # Logout
     path('logout/', views.logout_view, name='logout'),

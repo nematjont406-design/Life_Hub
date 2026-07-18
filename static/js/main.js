@@ -146,7 +146,7 @@ document.addEventListener('click', function(e) {
     const mobileBtn = document.querySelector('.mobile-menu-btn');
     
     if (navLinks && navLinks.classList.contains('active')) {
-        if (!navLinks.contains(e.target) && !mobileBtn.contains(e.target)) {
+        if (!navLinks.contains(e.target) && mobileBtn && !mobileBtn.contains(e.target)) {
             navLinks.classList.remove('active');
         }
     }

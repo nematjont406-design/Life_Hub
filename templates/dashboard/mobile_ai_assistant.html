@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}LifeHub AI{% endblock %}
+{% block content %}
+<!-- Mobile AI Assistant - iPhone 16 Pro Style -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">✨ LifeHub AI</div>
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="mobile-search-container">
+            <div class="mobile-search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="AI yordamida qidirish..." class="mobile-search-input" id="mobileAiSearch">
+            </div>
+        </div>
+
+        <!-- AI Header -->
+        <div class="mobile-welcome-card" style="margin: 0 20px 20px;">
+            <div class="welcome-content">
+                <h2 class="welcome-title">Assalomu alaykum! 👋</h2>
+                <p class="welcome-subtitle">Men sizning shaxsiy AI yordamchingizman. Sizga qanday yordam bera olaman?</p>
+            </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div style="padding: 0 20px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                <button class="ai-action-btn" onclick="sendQuickMessage('Bugungi rejamni tuz')" style="padding: 12px; font-size: 13px;">
+                    <span>📅</span> Bugungi rejam
+                </button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Vazifalarimni tartibla')" style="padding: 12px; font-size: 13px;">
+                    <span>✅</span> Vazifalarni tartibla
+                </button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Xarajatlarimni tahlil qil')" style="padding: 12px; font-size: 13px;">
+                    <span>💰</span> Xarajatlarni tahlil
+                </button>
+                <button class="ai-action-btn" onclick="sendQuickMessage('Maqsadlarim bo\'yicha maslahat ber')" style="padding: 12px; font-size: 13px;">
+                    <span>🎯</span> Maqsadlar
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="mobile-ai-chat">
+            <div class="ai-chat-messages" id="mobileAiChatMessages">
+                <!-- Welcome message -->
+                <div class="ai-message ai-message-bot">
+                    <div class="ai-message-content">
+                        <p>Assalomu alaykum! Men LifeHub AI. Sizga qanday yordam bera olaman? 😊</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="ai-chat-input-container">
+                {% csrf_token %}
+                <input type="text" id="mobileAiChatInput" class="ai-chat-input" placeholder="Xabaringizni kiriting..." autocomplete="off">
+                <button class="ai-send-btn" onclick="sendMobileMessage()" id="mobileAiSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'mobile_ai_assistant' %}" class="bottom-nav-item active">
+                <i class="fas fa-robot"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ai-assistant.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ai-assistant.js' %}"></script>
+<script>
+// Mobile-specific functions
+function sendMobileMessage() {
+    const chatInput = document.getElementById('mobileAiChatInput');
+    const message = chatInput.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message to chat
+    addMobileUserMessage(message);
+    
+    // Clear input
+    chatInput.value = '';
+    
+    // Show loading
+    showMobileLoading();
+    
+    // Send to backend
+    fetch('/ai-chat/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideMobileLoading();
+        if (data.response) {
+            addMobileBotMessage(data.response);
+        } else {
+            addMobileBotMessage('Kechirasiz, xatolik yuz berdi. Qaytadan urinib ko\'ring.');
+        }
+    })
+    .catch(error => {
+        hideMobileLoading();
+        addMobileBotMessage('Aloqa xatoligi. Iltimos, qaytadan urinib ko\'ring.');
+        console.error('Error:', error);
+    });
+}
+
+function addMobileUserMessage(message) {
+    const chatMessages = document.getElementById('mobileAiChatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'ai-message ai-message-user';
+    messageDiv.innerHTML = `
+        <div class="ai-message-content">
+            <p>${escapeHtml(message)}</p>
+        </div>
+    `;
+    chatMessages.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+function addMobileBotMessage(message) {
+    const chatMessages = document.getElementById('mobileAiChatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'ai-message ai-message-bot';
+    messageDiv.innerHTML = `
+        <div class="ai-message-content">
+            <p>${formatBotMessage(message)}</p>
+        </div>
+    `;
+    chatMessages.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+function showMobileLoading() {
+    const chatMessages = document.getElementById('mobileAiChatMessages');
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'ai-message ai-message-bot ai-loading';
+    loadingDiv.id = 'mobileAiLoading';
+    loadingDiv.innerHTML = `
+        <div class="ai-message-content">
+            <div class="ai-loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    `;
+    chatMessages.appendChild(loadingDiv);
+    scrollToBottom();
+    
+    const sendBtn = document.getElementById('mobileAiSendBtn');
+    if (sendBtn) {
+        sendBtn.disabled = true;
+    }
+}
+
+function hideMobileLoading() {
+    const loadingDiv = document.getElementById('mobileAiLoading');
+    if (loadingDiv) {
+        loadingDiv.remove();
+    }
+    
+    const sendBtn = document.getElementById('mobileAiSendBtn');
+    if (sendBtn) {
+        sendBtn.disabled = false;
+    }
+}
+
+// Mobile-specific initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Update theme icon based on saved preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        const themeIcon = document.querySelector('.theme-btn i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+    
+    // Enter key to send message on mobile
+    const mobileChatInput = document.getElementById('mobileAiChatInput');
+    if (mobileChatInput) {
+        mobileChatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMobileMessage();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

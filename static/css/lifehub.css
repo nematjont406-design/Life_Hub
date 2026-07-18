@@ -1559,6 +1559,13 @@ body.dark-mode .top-navbar {
     display: none;
 }
 
+/* Show mobile viewport on mobile devices */
+@media (max-width: 768px) {
+    .mobile-viewport {
+        display: block;
+    }
+}
+
 /* ===== TABLET/MOBILE BREAKPOINT (768px and below) ===== */
 @media (max-width: 768px) {
     /* Show mobile menu button */
@@ -2125,6 +2132,51 @@ img {
 
 .shadow { box-shadow: var(--shadow); }
 .shadow-lg { box-shadow: var(--shadow-lg); }
+
+/* ===== MOBILE AI ASSISTANT STYLES ===== */
+@media (max-width: 768px) {
+    /* AI Assistant mobile chat container */
+    .mobile-ai-chat {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 200px);
+        margin: 0 20px 20px;
+        max-width: 390px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .mobile-ai-chat .ai-chat-messages {
+        flex: 1;
+        max-height: 350px;
+        padding: 10px;
+    }
+    
+    .mobile-ai-chat .ai-message {
+        max-width: 85%;
+    }
+    
+    .mobile-ai-chat .ai-message-content {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    .mobile-ai-chat .ai-chat-input-container {
+        padding: 10px;
+        gap: 8px;
+    }
+    
+    .mobile-ai-chat .ai-chat-input {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    .mobile-ai-chat .ai-send-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+}
 
 /* ===== PRINT STYLES ===== */
 @media print {

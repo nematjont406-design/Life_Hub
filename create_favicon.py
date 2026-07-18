@@ -1,4 +1,5 @@
 import math
+from PIL import Image, ImageDraw
 
 # Create 512x512 image with transparent background
 size = 512

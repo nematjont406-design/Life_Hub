@@ -11,7 +11,8 @@
     <meta name="format-detection" content="telephone=no">
     <title>{% if site_settings %}{{ site_settings.site_name }}{% else %}LifeHub{% endif %} - {% block title %}{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/lifehub.css' %}">
+<link rel="stylesheet" href="{% static 'css/lifehub.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ai-floating.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -32,7 +33,12 @@
         </div>
     </nav>
 
-    {% block content %}{% endblock %}
+{% block content %}{% endblock %}
+
+    <!-- Floating AI Button - Does nothing when clicked -->
+    <button class="ai-floating-btn" title="LifeHub AI">
+        <i class="fas fa-robot"></i>
+    </button>
 
     <!-- Bottom Navigation (Tablet) - Hidden on mobile and desktop -->
     <nav class="bottom-nav">
@@ -42,7 +48,7 @@
         </ul>
     </nav>
 
-    <script src="/static/js/main.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}
     <script>
         // Theme toggle - preserves user preference
