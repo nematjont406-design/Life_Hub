@@ -963,6 +963,28 @@ body.dark-mode .top-navbar {
     justify-content: center;
 }
 
+/* ===== MOBILE SIDEBAR ===== */
+.sidebar.active {
+    transform: translateX(0) !important;
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 260px !important;
+        transform: translateX(-100%);
+        z-index: 1000 !important;
+        transition: transform 0.3s ease !important;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+}
+
 /* ===== NOTIFICATION BUTTONS ===== */
 .notification-btn {
     background: none;
@@ -1891,7 +1913,7 @@ body.dark-mode .top-navbar {
     margin-top: 0;
 }
 
-.section-divider:last-child {
+ .section-divider:last-child {
     margin-bottom: 0;
 }
 
