@@ -10,5 +10,5 @@ python manage.py collectstatic --noinput
 # Run migrations
 python manage.py migrate
 
-# Create superuser if needed (optional)
-# echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'adminpassword')" | python manage.py shell
+# Create admin user
+python create_admin.py

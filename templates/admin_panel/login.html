@@ -9,6 +9,15 @@
         </div>
         <div class="auth-form">
             <h2>Admin Panelga kirish</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger" style="margin-bottom: 15px;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
             <form method="post">
                 {% csrf_token %}
                 <div class="form-group">
