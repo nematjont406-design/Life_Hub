@@ -37,8 +37,8 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="header-logo">✨ LifeHub AI</div>
-                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
-                    <i class="fas fa-moon"></i>
+                <button class="header-icon" aria-label="Add" onclick="showAddTaskModal()" style="width: 36px; height: 36px;">
+                    <i class="fas fa-plus"></i>
                 </button>
             </div>
         </header>
@@ -147,6 +147,40 @@
             </a>
         </div>
     </nav>
+</div>
+
+<!-- Add Task Modal - Mobile Responsive -->
+<div id="addTaskModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 390px; width: 90%; margin: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0; font-size: 18px;"><i class="fas fa-plus"></i> Add New Task</h3>
+            <button onclick="closeAddTaskModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addTaskForm" method="POST" action="{% url 'add_task' %}">
+            {% csrf_token %}
+            <input type="hidden" id="taskId" name="task_id" value="">
+            <div class="form-group">
+                <label for="taskTitle" style="font-size: 14px; margin-bottom: 6px;">Task Title</label>
+                <input type="text" id="taskTitle" name="title" required placeholder="Enter task title..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="taskPriority" style="font-size: 14px; margin-bottom: 6px;">Priority</label>
+                <select id="taskPriority" name="priority" style="width: 100%; padding: 12px 14px; font-size: 14px;">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="taskDate" style="font-size: 14px; margin-bottom: 6px;">Due Date</label>
+                <input type="date" id="taskDate" name="due_date" style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline" onclick="closeAddTaskModal()" style="padding: 10px 16px; font-size: 14px;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;">Add Task</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
 
