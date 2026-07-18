@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Notes{% endblock %}
+{% block content %}
+<!-- Mobile Notes - iPhone 16 Pro Style -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">Notes</div>
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="mobile-search-container">
+            <div class="mobile-search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search notes..." class="mobile-search-input" id="mobileNotesSearch">
+            </div>
+        </div>
+
+        <!-- Notes List -->
+        <div class="mobile-section notes-section" style="margin: 0 20px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: var(--primary); font-size: 16px; margin: 0;"><i class="fas fa-sticky-note"></i> My Notes</h3>
+                <button class="header-icon" aria-label="Add Note" onclick="showAddNoteModal()" style="width: 36px; height: 36px;">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            
+            {% if notes %}
+                {% for note in notes %}
+                <div class="task-item" style="padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
+                    <span class="task-text" style="font-size: 14px; font-weight: 600;">{{ note.title }}</span>
+                    <span style="font-size: 12px; opacity: 0.7; line-clamp: 2;">{{ note.content|truncatechars:100 }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="opacity: 0.7; text-align: center; padding: 20px; font-size: 14px;">No notes yet. Add your first note!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'add' %}" class="bottom-nav-item">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<!-- Add Note Modal - Mobile Responsive -->
+<div id="addNoteModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 390px; width: 90%; margin: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0; font-size: 18px;"><i class="fas fa-sticky-note"></i> Add New Note</h3>
+            <button onclick="closeAddNoteModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addNoteForm" method="POST" action="{% url 'add_note' %}">
+            {% csrf_token %}
+            <input type="hidden" id="noteId" name="note_id" value="">
+            <div class="form-group">
+                <label for="noteTitle" style="font-size: 14px; margin-bottom: 6px;">Note Title</label>
+                <input type="text" id="noteTitle" name="title" required placeholder="Enter note title..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="noteText" style="font-size: 14px; margin-bottom: 6px;">Note Content</label>
+                <textarea id="noteText" name="content" placeholder="Write your note here..." style="width: 100%; height: 100px; font-size: 14px; padding: 12px 14px;"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="noteFolder" style="font-size: 14px; margin-bottom: 6px;">Folder</label>
+                <input type="text" id="noteFolder" name="folder" value="all" placeholder="Enter folder name..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline" onclick="closeAddNoteModal()" style="padding: 10px 16px; font-size: 14px;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;">Add Note</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile-specific initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Update theme icon based on saved preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        const themeIcon = document.querySelector('.theme-btn i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+});
+</script>
+{% endblock %}

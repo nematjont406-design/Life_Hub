@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Calendar{% endblock %}
+{% block content %}
+<!-- Mobile Calendar - iPhone 16 Pro Style -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">Calendar</div>
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="mobile-search-container">
+            <div class="mobile-search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search events..." class="mobile-search-input" id="mobileCalendarSearch">
+            </div>
+        </div>
+
+        <!-- Calendar Section -->
+        <div class="mobile-section calendar-section" style="margin: 0 20px 16px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;"><i class="fas fa-calendar-day"></i> Upcoming Events</h3>
+            
+            {% if important_dates %}
+                {% for date in important_dates %}
+                <div class="task-item" style="padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-calendar" style="color: var(--primary); font-size: 16px;"></i>
+                    <div style="flex: 1;">
+                        <span class="task-text" style="font-size: 14px; font-weight: 600;">{{ date.title }}</span>
+                        <div style="font-size: 12px; opacity: 0.7;">{{ date.date|date:"d F Y" }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="opacity: 0.7; text-align: center; padding: 20px; font-size: 14px;">No upcoming events. Add your first event!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'add' %}" class="bottom-nav-item">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile-specific initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Update theme icon based on saved preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        const themeIcon = document.querySelector('.theme-btn i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+});
+</script>
+{% endblock %}

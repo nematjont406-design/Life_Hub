@@ -13,4 +13,7 @@ urlpatterns = [
     path('analytics/', views.admin_analytics, name='admin_analytics'),
     path('notifications/', views.admin_notifications, name='admin_notifications'),
     path('settings/', views.admin_settings, name='admin_settings'),
+    path('contact-messages/', views.admin_contact_messages, name='admin_contact_messages'),
+    path('contact-messages/<int:message_id>/', views.admin_contact_message_detail, name='admin_contact_message_detail'),
+    path('contact-messages/<int:message_id>/delete/', views.admin_contact_message_delete, name='admin_contact_message_delete'),
 ]

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Message Detail{% endblock %}
+{% block content %}
+<div class="admin-dashboard">
+    <div class="admin-header">
+        <h1><i class="fas fa-envelope"></i> Murojaat Tafsilotlari</h1>
+    </div>
+    
+    <div class="glass-card">
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin-bottom: 10px;">{{ message.name }}</h3>
+            <p style="opacity: 0.7; margin-bottom: 5px;"><i class="fas fa-envelope"></i> {{ message.email }}</p>
+            <p style="opacity: 0.7; margin-bottom: 5px;"><i class="fas fa-clock"></i> {{ message.created_at|date:"d.m.Y H:i" }}</p>
+        </div>
+        
+        <div style="background: var(--glass-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h4 style="color: var(--primary); margin-bottom: 10px;">Mavzu: {{ message.subject }}</h4>
+            <p style="line-height: 1.6;">{{ message.message }}</p>
+        </div>
+        
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'admin_contact_messages' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Orqaga
+            </a>
+            <a href="{% url 'admin_contact_message_delete' message.id %}" class="btn btn-primary" style="background: var(--danger);">
+                <i class="fas fa-trash"></i> O'chirish
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Statistics{% endblock %}
+{% block content %}
+<!-- Mobile Statistics - iPhone 16 Pro Style -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">Statistics</div>
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Grid 2x2 -->
+        <div class="mobile-stats-grid">
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <div class="stat-number">12</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-number">8</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-calendar-days"></i>
+                </div>
+                <div class="stat-number">5</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-number">94%</div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="mobile-section statistics-section" style="margin: 0 20px 16px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;"><i class="fas fa-chart-bar"></i> Productivity Stats</h3>
+            
+            <p style="opacity: 0.7; text-align: center; padding: 20px; font-size: 14px;">Statistics will be available soon!</p>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'add' %}" class="bottom-nav-item">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile-specific initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Update theme icon based on saved preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        const themeIcon = document.querySelector('.theme-btn i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -8,6 +8,16 @@ class SiteSettings(models.Model):
     email_notifications = models.BooleanField(default=True)
     telegram_notifications = models.BooleanField(default=False)
     
+    # Social media links
+    telegram_channel = models.URLField(blank=True, null=True, help_text='Telegram kanal havoli')
+    instagram_link = models.URLField(blank=True, null=True, help_text='Instagram havoli')
+    youtube_link = models.URLField(blank=True, null=True, help_text='YouTube havoli')
+    tiktok_link = models.URLField(blank=True, null=True, help_text='TikTok havoli')
+    
+    # Site branding
+    logo = models.ImageField(upload_to='site/', blank=True, null=True, help_text='Sayt logotipi')
+    banner = models.ImageField(upload_to='site/', blank=True, null=True, help_text='Sayt banneri')
+    
     class Meta:
         verbose_name = 'Sayt sozlamalari'
         verbose_name_plural = 'Sayt sozlamalari'
@@ -26,3 +36,20 @@ class SiteSettings(models.Model):
     
     def __str__(self):
         return 'Sayt sozlamalari'
+
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Murojaat'
+        verbose_name_plural = 'Murojaatlar'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} - {self.subject}"

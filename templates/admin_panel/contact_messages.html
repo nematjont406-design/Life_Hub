@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Contact Messages{% endblock %}
+{% block content %}
+<div class="admin-dashboard">
+    <div class="admin-header">
+        <h1><i class="fas fa-envelope"></i> Foydalanuvchilar Murojaatlari</h1>
+    </div>
+    
+    <div class="glass-card">
+        {% if messages %}
+            <div class="responsive-table">
+                <table class="responsive-table">
+                    <thead>
+                        <tr>
+                            <th>Ism</th>
+                            <th>Email</th>
+                            <th>Mavzu</th>
+                            <th>Sana</th>
+                            <th>Holat</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for message in messages %}
+                        <tr>
+                            <td data-label="Ism">{{ message.name }}</td>
+                            <td data-label="Email">{{ message.email }}</td>
+                            <td data-label="Mavzu">{{ message.subject }}</td>
+                            <td data-label="Sana">{{ message.created_at|date:"d.m.Y H:i" }}</td>
+                            <td data-label="Holat">
+                                {% if message.is_read %}
+                                    <span style="color: var(--success);"><i class="fas fa-check"></i> O'qilgan</span>
+                                {% else %}
+                                    <span style="color: var(--warning);"><i class="fas fa-clock"></i> Yangi</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Amallar">
+                                <a href="{% url 'admin_contact_message_detail' message.id %}" class="btn btn-primary" style="padding: 8px 12px; font-size: 13px;">
+                                    <i class="fas fa-eye"></i> Ko'rish
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        {% else %}
+            <p style="text-align: center; padding: 40px; opacity: 0.7;">Hech qanday murojaat kelmagan</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

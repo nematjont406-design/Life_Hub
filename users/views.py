@@ -4,6 +4,17 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import JsonResponse
 from .models import User, Task, Note, Idea, Expense, ImportantDate, Document, Link, Contact, Gallery, Wishlist, HealthReminder, ShoppingList, Goal, PasswordVault, Notification
+import re
+
+
+def is_mobile(request):
+    """Detect if the request is coming from a mobile device"""
+    user_agent = request.META.get('HTTP_USER_AGENT', '')
+    mobile_patterns = [
+        r'Mobile', r'Android', r'iPhone', r'iPad', r'iPod', r'BlackBerry',
+        r'IEMobile', r'Opera Mini', r'Windows Phone', r'webOS'
+    ]
+    return any(re.search(pattern, user_agent) for pattern in mobile_patterns)
 
 # Guest pages
 def home(request):
@@ -16,6 +27,22 @@ def features(request):
     return render(request, 'features.html')
 
 def contact(request):
+    if request.method == 'POST':
+        from admin_panel.models import ContactMessage
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        if name and email and subject and message:
+            ContactMessage.objects.create(
+                name=name,
+                email=email,
+                subject=subject,
+                message=message
+            )
+            return render(request, 'contact.html', {'success': True})
+    
     return render(request, 'contact.html')
 
 def faq(request):
@@ -83,10 +110,16 @@ def dashboard(request):
         'important_docs': important_docs,
         'notifications': notifications,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_dashboard.html', context)
     return render(request, 'dashboard/dashboard.html', context)
 
 @login_required
 def ai_assistant_view(request):
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_ai_assistant.html')
     return render(request, 'dashboard/ai_assistant.html')
 
 @login_required
@@ -104,6 +137,9 @@ def calendar_view(request):
     context = {
         'important_dates': important_dates,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_calendar.html', context)
     return render(request, 'dashboard/calendar.html', context)
 
 @login_required
@@ -112,6 +148,9 @@ def tasks_view(request):
     context = {
         'tasks': tasks,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_tasks.html', context)
     return render(request, 'dashboard/tasks.html', context)
 
 @login_required
@@ -120,6 +159,9 @@ def notes_view(request):
     context = {
         'notes': notes,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_notes.html', context)
     return render(request, 'dashboard/notes.html', context)
 
 @login_required
@@ -128,6 +170,9 @@ def expenses_view(request):
     context = {
         'expenses': expenses,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_expenses.html', context)
     return render(request, 'dashboard/expenses.html', context)
 
 @login_required
@@ -136,6 +181,9 @@ def important_dates_view(request):
     context = {
         'important_dates': important_dates,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_calendar.html', context)
     return render(request, 'dashboard/important_dates.html', context)
 
 @login_required
@@ -144,6 +192,9 @@ def documents_view(request):
     context = {
         'documents': documents,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_documents.html', context)
     return render(request, 'dashboard/documents.html', context)
 
 @login_required
@@ -152,6 +203,9 @@ def links_view(request):
     context = {
         'links': links,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_links.html', context)
     return render(request, 'dashboard/links.html', context)
 
 @login_required
@@ -160,6 +214,9 @@ def contacts_view(request):
     context = {
         'contacts': contacts,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_contacts.html', context)
     return render(request, 'dashboard/contacts.html', context)
 
 @login_required
@@ -168,14 +225,23 @@ def gallery_view(request):
     context = {
         'images': images,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_gallery.html', context)
     return render(request, 'dashboard/gallery.html', context)
 
 @login_required
 def statistics_view(request):
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_statistics.html')
     return render(request, 'dashboard/statistics.html')
 
 @login_required
 def notifications_view(request):
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_notifications.html')
     return render(request, 'dashboard/notifications.html')
 
 @login_required
@@ -194,6 +260,9 @@ def profile_view(request):
         user.save()
         return redirect('profile')
     
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_profile.html')
     return render(request, 'dashboard/profile.html')
 
 @login_required
@@ -214,6 +283,9 @@ def change_password(request):
 
 @login_required
 def settings_view(request):
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'dashboard/mobile_settings.html')
     return render(request, 'dashboard/settings.html')
 
 # Additional modules

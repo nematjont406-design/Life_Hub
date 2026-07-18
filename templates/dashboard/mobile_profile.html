@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<!-- Mobile Profile - iPhone 16 Pro Style -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">Profile</div>
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Profile Section -->
+        <div class="mobile-section profile-section" style="margin: 0 20px 16px;">
+            <div class="profile-header" style="text-align: center; padding: 20px;">
+                <div class="profile-avatar" style="width: 80px; height: 80px; font-size: 32px; margin: 0 auto 15px;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-name" style="font-size: 20px;">{{ user.first_name|default:user.username }}</div>
+                <div class="profile-username" style="font-size: 14px;">@{{ user.username }}</div>
+                <span class="premium-badge" style="font-size: 12px; padding: 4px 16px;">Premium</span>
+            </div>
+
+            <div class="settings-list" style="margin-top: 20px;">
+                <div class="settings-item" onclick="location.href='{% url 'settings' %}'" style="padding: 15px;">
+                    <span><i class="fas fa-cog"></i> Settings</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item" onclick="location.href='{% url 'change_password' %}'" style="padding: 15px;">
+                    <span><i class="fas fa-key"></i> Change Password</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item" onclick="location.href='{% url 'logout' %}'" style="padding: 15px;">
+                    <span><i class="fas fa-sign-out-alt"></i> Logout</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'add' %}" class="bottom-nav-item">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item active">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile-specific initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Update theme icon based on saved preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        const themeIcon = document.querySelector('.theme-btn i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1559,15 +1559,13 @@ body.dark-mode .top-navbar {
     display: none;
 }
 
-/* Show mobile viewport on mobile devices */
+/* ===== TABLET/MOBILE BREAKPOINT (768px and below) ===== */
 @media (max-width: 768px) {
+    /* Show mobile viewport on mobile devices */
     .mobile-viewport {
         display: block;
     }
-}
-
-/* ===== TABLET/MOBILE BREAKPOINT (768px and below) ===== */
-@media (max-width: 768px) {
+    
     /* Show mobile menu button */
     .mobile-menu-btn {
         display: block;
@@ -1963,22 +1961,6 @@ body.dark-mode .top-navbar {
 .mobile-dashboard > * {
     position: relative;
     z-index: 1;
-}
-
-/* ===== TABLET/MOBILE: HIDE DESKTOP ELEMENTS ===== */
-@media (max-width: 768px) {
-    .top-navbar,
-    .bottom-nav {
-        display: none !important;
-    }
-    
-    .dashboard {
-        display: none !important;
-    }
-    
-    .mobile-dashboard {
-        display: block !important;
-    }
 }
 
 /* ===== DESKTOP: HIDE MOBILE ELEMENTS ===== */

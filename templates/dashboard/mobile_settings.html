@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<!-- Mobile Settings - iPhone 16 Pro Style -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">Settings</div>
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Settings Section -->
+        <div class="mobile-section settings-section" style="margin: 0 20px 16px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;"><i class="fas fa-cog"></i> Settings</h3>
+            
+            <div class="settings-list">
+                <div class="settings-item" style="padding: 15px;">
+                    <span><i class="fas fa-moon"></i> Dark Mode</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item" style="padding: 15px;">
+                    <span><i class="fas fa-bell"></i> Notifications</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item" style="padding: 15px;">
+                    <span><i class="fas fa-language"></i> Language</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item" style="padding: 15px;">
+                    <span><i class="fas fa-palette"></i> Theme</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item" style="padding: 15px;">
+                    <span><i class="fas fa-shield-alt"></i> Privacy</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'add' %}" class="bottom-nav-item">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile-specific initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Update theme icon based on saved preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        const themeIcon = document.querySelector('.theme-btn i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+});
+</script>
+{% endblock %}

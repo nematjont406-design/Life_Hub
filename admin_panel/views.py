@@ -13,6 +13,17 @@ from django.template.loader import render_to_string
 from io import BytesIO
 from xhtml2pdf import pisa
 from django.conf import settings
+import re
+
+
+def is_mobile(request):
+    """Detect if the request is coming from a mobile device"""
+    user_agent = request.META.get('HTTP_USER_AGENT', '')
+    mobile_patterns = [
+        r'Mobile', r'Android', r'iPhone', r'iPad', r'iPod', r'BlackBerry',
+        r'IEMobile', r'Opera Mini', r'Windows Phone', r'webOS'
+    ]
+    return any(re.search(pattern, user_agent) for pattern in mobile_patterns)
 
 # Custom admin required decorator
 def admin_required(view_func):
@@ -46,6 +57,9 @@ def admin_dashboard(request):
         'total_ideas': total_ideas,
         'today_registrations': today_registrations,
     }
+    # Use mobile template for mobile devices
+    if is_mobile(request):
+        return render(request, 'admin_panel/mobile_dashboard.html', context)
     return render(request, 'admin_panel/dashboard.html', context)
 
 @admin_required
@@ -284,6 +298,18 @@ def admin_settings(request):
         settings.email_notifications = request.POST.get('email_notifications') == 'on'
         settings.telegram_notifications = request.POST.get('telegram_notifications') == 'on'
         
+        # Social media links
+        settings.telegram_channel = request.POST.get('telegram_channel', '')
+        settings.instagram_link = request.POST.get('instagram_link', '')
+        settings.youtube_link = request.POST.get('youtube_link', '')
+        settings.tiktok_link = request.POST.get('tiktok_link', '')
+        
+        # Site branding
+        if request.FILES.get('logo'):
+            settings.logo = request.FILES.get('logo')
+        if request.FILES.get('banner'):
+            settings.banner = request.FILES.get('banner')
+        
         settings.save()
         messages.success(request, 'Sozlamalar muvaffaqiyatli saqlandi!')
     
@@ -291,3 +317,41 @@ def admin_settings(request):
         'settings': settings,
     }
     return render(request, 'admin_panel/settings.html', context)
+
+
+@admin_required
+def admin_contact_messages(request):
+    from .models import ContactMessage
+    
+    messages_list = ContactMessage.objects.all().order_by('-created_at')
+    context = {
+        'messages': messages_list,
+    }
+    return render(request, 'admin_panel/contact_messages.html', context)
+
+
+@admin_required
+def admin_contact_message_detail(request, message_id):
+    from .models import ContactMessage
+    
+    message = get_object_or_404(ContactMessage, id=message_id)
+    if not message.is_read:
+        message.is_read = True
+        message.save()
+    
+    context = {
+        'message': message,
+    }
+    return render(request, 'admin_panel/contact_message_detail.html', context)
+
+
+@admin_required
+def admin_contact_message_delete(request, message_id):
+    from .models import ContactMessage
+    
+    message = get_object_or_404(ContactMessage, id=message_id)
+    if request.method == 'POST':
+        message.delete()
+        messages.success(request, 'Murojaat o\'chirildi!')
+        return redirect('admin_contact_messages')
+    return render(request, 'admin_panel/contact_message_delete.html', {'message': message})

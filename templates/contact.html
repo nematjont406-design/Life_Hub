@@ -1,4 +1,4 @@
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block title %}Aloqa{% endblock %}
 {% block content %}
 <section class="hero">
@@ -25,6 +25,11 @@
         
         <div style="margin-top: 40px; background: var(--glass); padding: 30px; border-radius: 15px; backdrop-filter: blur(15px); border: 1px solid var(--glass-border);">
             <h3 style="color: var(--accent); margin-bottom: 20px;">Aloqa Formasi</h3>
+            {% if success %}
+                <div style="background: var(--success); color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-check"></i> Xabar muvaffaqiyatli yuborildi! Tez orada javob beramiz.
+                </div>
+            {% endif %}
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group">
@@ -32,6 +37,9 @@
                 </div>
                 <div class="form-group">
                     <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="subject" placeholder="Mavzu" required>
                 </div>
                 <div class="form-group">
                     <textarea name="message" placeholder="Xabar" rows="5" required></textarea>

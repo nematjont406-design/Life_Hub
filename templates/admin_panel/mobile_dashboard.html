@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Admin Panel{% endblock %}
+{% block content %}
+<!-- Mobile Admin Dashboard - iPhone 16 Pro Style -->
+<div class="mobile-viewport">
+    <div class="mobile-dashboard">
+        <!-- Header -->
+        <header class="mobile-header">
+            <div class="header-container">
+                <button class="header-icon hamburger-btn" aria-label="Menu" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-logo">Admin Panel</div>
+                <button class="header-icon theme-btn" aria-label="Theme" onclick="toggleMobileTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Grid 2x2 -->
+        <div class="mobile-stats-grid">
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number">{{ total_users|default:"0" }}</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="stat-number">{{ premium_users|default:"0" }}</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="stat-number">{{ total_tasks|default:"0" }}</div>
+            </div>
+            <div class="stat-card-mobile">
+                <div class="stat-icon-mobile">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <div class="stat-number">{{ total_notes|default:"0" }}</div>
+            </div>
+        </div>
+
+        <!-- Admin Menu -->
+        <div class="mobile-section" style="margin: 0 20px 16px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;"><i class="fas fa-cog"></i> Admin Menu</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                <a href="{% url 'admin_users' %}" class="bottom-nav-item" style="flex-direction: column; text-decoration: none; padding: 20px 10px;">
+                    <i class="fas fa-users" style="font-size: 24px; margin-bottom: 8px;"></i>
+                    <span style="font-size: 12px;">Foydalanuvchilar</span>
+                </a>
+                <a href="{% url 'admin_analytics' %}" class="bottom-nav-item" style="flex-direction: column; text-decoration: none; padding: 20px 10px;">
+                    <i class="fas fa-chart-line" style="font-size: 24px; margin-bottom: 8px;"></i>
+                    <span style="font-size: 12px;">Analytics</span>
+                </a>
+                <a href="{% url 'admin_contact_messages' %}" class="bottom-nav-item" style="flex-direction: column; text-decoration: none; padding: 20px 10px;">
+                    <i class="fas fa-envelope" style="font-size: 24px; margin-bottom: 8px;"></i>
+                    <span style="font-size: 12px;">Murojaatlar</span>
+                </a>
+                <a href="{% url 'admin_settings' %}" class="bottom-nav-item" style="flex-direction: column; text-decoration: none; padding: 20px 10px;">
+                    <i class="fas fa-cog" style="font-size: 24px; margin-bottom: 8px;"></i>
+                    <span style="font-size: 12px;">Sozlamalar</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'mobile_dashboard' %}" class="bottom-nav-item">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="{% url 'add' %}" class="bottom-nav-item">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+            <a href="{% url 'profile' %}" class="bottom-nav-item">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile-specific initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Update theme icon based on saved preference
+    if (localStorage.getItem('darkMode') === 'true') {
+        const themeIcon = document.querySelector('.theme-btn i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+});
+</script>
+{% endblock %}
