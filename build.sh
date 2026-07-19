@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Build script for Render deployment
 
+set -e  # Exit on any error
+
 # Install dependencies
 pip install -r requirements.txt
 
