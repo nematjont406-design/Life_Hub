@@ -61,12 +61,14 @@
             
             {% if documents %}
                 {% for document in documents %}
-                <div class="task-item" style="padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                <div class="task-item" data-id="{{ document.id }}" style="padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-file" style="color: var(--primary); font-size: 20px;"></i>
                     <div style="flex: 1;">
                         <span class="task-text" style="font-size: 14px; font-weight: 600;">{{ document.title }}</span>
                         <div style="font-size: 12px; opacity: 0.7;">{{ document.folder|default:"General" }}</div>
                     </div>
+                    <button onclick="editDocument({{ document.id }})" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 14px;"><i class="fas fa-edit"></i></button>
+                    <button onclick="deleteDocument({{ document.id }})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px;"><i class="fas fa-trash"></i></button>
                 </div>
                 {% endfor %}
             {% else %}
@@ -84,6 +86,36 @@
         </div>
     </nav>
 </div>
+
+<!-- Add Document Modal - Mobile Responsive -->
+<div id="addDocumentModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 390px; width: 90%; margin: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0; font-size: 18px;"><i class="fas fa-folder"></i> Add New Document</h3>
+            <button onclick="closeAddDocumentModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addDocumentForm" method="POST" action="{% url 'add_document' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" id="documentId" name="document_id" value="">
+            <div class="form-group">
+                <label for="documentTitle" style="font-size: 14px; margin-bottom: 6px;">Document Title</label>
+                <input type="text" id="documentTitle" name="title" required placeholder="Enter document title..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="documentFile" style="font-size: 14px; margin-bottom: 6px;">File</label>
+                <input type="file" id="documentFile" name="file" required style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="documentFolder" style="font-size: 14px; margin-bottom: 6px;">Folder</label>
+                <input type="text" id="documentFolder" name="folder" placeholder="Enter folder name..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline" onclick="closeAddDocumentModal()" style="padding: 10px 16px; font-size: 14px;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;">Add Document</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -98,5 +130,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// Show add document modal
+function showAddDocumentModal() {
+    document.getElementById('addDocumentModal').style.display = 'flex';
+}
+
+// Close add document modal
+function closeAddDocumentModal() {
+    document.getElementById('addDocumentModal').style.display = 'none';
+}
+
+// Edit document
+function editDocument(documentId) {
+    fetch(`/get-document/${documentId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                document.getElementById('documentId').value = data.id;
+                document.getElementById('documentTitle').value = data.title || '';
+                document.getElementById('documentFolder').value = data.folder || '';
+                document.getElementById('addDocumentForm').action = `/edit-document/${data.id}/`;
+                showAddDocumentModal();
+            }
+        });
+}
+
+// Delete document
+function deleteDocument(documentId) {
+    if (confirm('Are you sure you want to delete?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-document/${documentId}/`;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 {% endblock %}

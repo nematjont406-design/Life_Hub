@@ -61,9 +61,16 @@
             
             {% if links %}
                 {% for link in links %}
-                <div class="task-item" style="padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
-                    <span class="task-text" style="font-size: 14px; font-weight: 600;">{{ link.title }}</span>
-                    <span style="font-size: 12px; opacity: 0.7;">{{ link.url|truncatechars:40 }}</span>
+                <div class="task-item" data-id="{{ link.id }}" style="padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
+                    <a href="{{ link.url }}" target="_blank" style="text-decoration: none; font-size: 14px; font-weight: 600; color: var(--primary);">{{ link.title }}</a>
+                    <span style="font-size: 12px; opacity: 0.7; word-break: break-all;">{{ link.url|truncatechars:40 }}</span>
+                    {% if link.category %}
+                    <span style="font-size: 11px; opacity: 0.6;">{{ link.category }}</span>
+                    {% endif %}
+                    <div style="display: flex; gap: 10px; width: 100%; justify-content: flex-end;">
+                        <button onclick="editLink({{ link.id }})" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 14px;"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteLink({{ link.id }})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px;"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
                 {% endfor %}
             {% else %}
@@ -81,6 +88,36 @@
         </div>
     </nav>
 </div>
+
+<!-- Add/Edit Link Modal - Mobile Responsive -->
+<div id="addLinkModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 390px; width: 90%; margin: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0; font-size: 18px;"><i class="fas fa-link"></i> <span id="linkModalTitle">Add Link</span></h3>
+            <button onclick="closeAddLinkModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addLinkForm" method="POST" action="{% url 'add_link' %}">
+            {% csrf_token %}
+            <input type="hidden" id="linkId" name="link_id" value="">
+            <div class="form-group">
+                <label for="linkTitle" style="font-size: 14px; margin-bottom: 6px;">Link Title</label>
+                <input type="text" id="linkTitle" name="title" required placeholder="Enter link title..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="linkUrl" style="font-size: 14px; margin-bottom: 6px;">URL</label>
+                <input type="url" id="linkUrl" name="url" required placeholder="https://example.com" style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="linkCategory" style="font-size: 14px; margin-bottom: 6px;">Category (optional)</label>
+                <input type="text" id="linkCategory" name="category" placeholder="Enter category..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline" onclick="closeAddLinkModal()" style="padding: 10px 16px; font-size: 14px;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;">Save Link</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -95,5 +132,52 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// Show add link modal
+function showAddLinkModal() {
+    document.getElementById('linkModalTitle').textContent = 'Add Link';
+    document.getElementById('addLinkForm').action = '{% url "add_link" %}';
+    document.getElementById('linkId').value = '';
+    document.getElementById('addLinkForm').reset();
+    document.getElementById('addLinkModal').style.display = 'flex';
+}
+
+// Close add link modal
+function closeAddLinkModal() {
+    document.getElementById('addLinkModal').style.display = 'none';
+}
+
+// Edit link
+function editLink(linkId) {
+    fetch(`/get-link/${linkId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                document.getElementById('linkModalTitle').textContent = 'Edit Link';
+                document.getElementById('linkId').value = data.id;
+                document.getElementById('linkTitle').value = data.title;
+                document.getElementById('linkUrl').value = data.url;
+                document.getElementById('linkCategory').value = data.category || '';
+                document.getElementById('addLinkForm').action = `/edit-link/${data.id}/`;
+                showAddLinkModal();
+            }
+        });
+}
+
+// Delete link
+function deleteLink(linkId) {
+    if (confirm('Are you sure you want to delete?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-link/${linkId}/`;
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 {% endblock %}

@@ -62,8 +62,16 @@
             {% if contacts %}
                 {% for contact in contacts %}
                 <div class="task-item" style="padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
-                    <span class="task-text" style="font-size: 14px; font-weight: 600;">{{ contact.name }}</span>
-                    <span style="font-size: 12px; opacity: 0.7;">{{ contact.phone|default:contact.email|truncatechars:30 }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                        <div style="flex: 1;">
+                            <span class="task-text" style="font-size: 14px; font-weight: 600;">{{ contact.name }}</span>
+                            <span style="font-size: 12px; opacity: 0.7; display: block; margin-top: 2px;">{{ contact.phone|default:contact.email|truncatechars:30 }}</span>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button onclick="editContact({{ contact.id }})" style="background: none; border: none; color: var(--primary); cursor: pointer; padding: 4px; font-size: 14px;"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteContact({{ contact.id }})" style="background: none; border: none; color: var(--danger); cursor: pointer; padding: 4px; font-size: 14px;"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
             {% else %}
@@ -81,6 +89,48 @@
         </div>
     </nav>
 </div>
+
+<!-- Add/Edit Contact Modal - Mobile Responsive -->
+<div id="addContactModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-card" style="max-width: 390px; width: 90%; margin: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--primary); margin: 0; font-size: 18px;"><i class="fas fa-address-book"></i> <span id="contactModalTitle">Add Contact</span></h3>
+            <button onclick="closeAddContactModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">&times;</button>
+        </div>
+        <form id="addContactForm" method="POST" action="{% url 'add_contact' %}">
+            {% csrf_token %}
+            <input type="hidden" id="contactId" name="contact_id" value="">
+            <div class="form-group">
+                <label for="contactName" style="font-size: 14px; margin-bottom: 6px;">Name</label>
+                <input type="text" id="contactName" name="name" required placeholder="Enter contact name..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="contactPhone" style="font-size: 14px; margin-bottom: 6px;">Phone</label>
+                <input type="text" id="contactPhone" name="phone" placeholder="Enter phone number..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="contactTelegram" style="font-size: 14px; margin-bottom: 6px;">Telegram</label>
+                <input type="text" id="contactTelegram" name="telegram" placeholder="Enter telegram username..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="contactEmail" style="font-size: 14px; margin-bottom: 6px;">Email</label>
+                <input type="email" id="contactEmail" name="email" placeholder="Enter email..." style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="contactBirthday" style="font-size: 14px; margin-bottom: 6px;">Birthday (optional)</label>
+                <input type="date" id="contactBirthday" name="birthday" style="width: 100%; padding: 12px 14px; font-size: 14px;">
+            </div>
+            <div class="form-group">
+                <label for="contactNote" style="font-size: 14px; margin-bottom: 6px;">Note</label>
+                <textarea id="contactNote" name="note" placeholder="Enter note..." style="width: 100%; height: 80px; font-size: 14px; padding: 12px 14px;"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline" onclick="closeAddContactModal()" style="padding: 10px 16px; font-size: 14px;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 16px; font-size: 14px;">Save Contact</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -95,5 +145,59 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// Show add contact modal
+function showAddContactModal() {
+    document.getElementById('contactModalTitle').textContent = 'Add Contact';
+    document.getElementById('addContactForm').action = '{% url "add_contact" %}';
+    document.getElementById('contactId').value = '';
+    document.getElementById('addContactForm').reset();
+    document.getElementById('addContactModal').style.display = 'flex';
+}
+
+// Close add contact modal
+function closeAddContactModal() {
+    document.getElementById('addContactModal').style.display = 'none';
+}
+
+// Edit contact
+function editContact(contactId) {
+    fetch(`/get-contact/${contactId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                document.getElementById('contactModalTitle').textContent = 'Edit Contact';
+                document.getElementById('contactId').value = data.id;
+                document.getElementById('contactName').value = data.name;
+                document.getElementById('contactPhone').value = data.phone || '';
+                document.getElementById('contactTelegram').value = data.telegram || '';
+                document.getElementById('contactEmail').value = data.email || '';
+                document.getElementById('contactBirthday').value = data.birthday || '';
+                document.getElementById('contactNote').value = data.note || '';
+                document.getElementById('addContactForm').action = `/edit-contact/${data.id}/`;
+                showAddContactModal();
+            }
+        });
+}
+
+// Delete contact
+function deleteContact(contactId) {
+    if (confirm('Are you sure you want to delete?')) {
+        // Get CSRF token from the modal form
+        const csrfInput = document.querySelector('#addContactForm [name=csrfmiddlewaretoken]');
+        const csrfToken = csrfInput ? csrfInput.value : '';
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-contact/${contactId}/`;
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = csrfToken;
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 {% endblock %}

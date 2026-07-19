@@ -69,6 +69,8 @@
                     </div>
                     <span class="task-text" style="font-size: 14px; flex: 1;">{{ task.title }}</span>
                     <span class="task-priority priority-{{ task.priority }}" style="font-size: 11px;">{{ task.get_priority_display }}</span>
+                    <button onclick="editTask({{ task.id }})" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 14px;"><i class="fas fa-edit"></i></button>
+                    <button onclick="deleteTask({{ task.id }})" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px;"><i class="fas fa-trash"></i></button>
                 </div>
                 {% endfor %}
             {% else %}
@@ -149,5 +151,58 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Show add task modal
+function showAddTaskModal() {
+    document.getElementById('addTaskModal').style.display = 'flex';
+}
+
+// Close add task modal
+function closeAddTaskModal() {
+    document.getElementById('addTaskModal').style.display = 'none';
+}
+
+// Toggle task checkbox
+function toggleTask(element) {
+    element.classList.toggle('checked');
+    if (element.classList.contains('checked')) {
+        element.innerHTML = '<i class="fas fa-check" style="font-size: 10px; color: white;"></i>';
+    } else {
+        element.innerHTML = '';
+    }
+}
+
+// Edit task
+function editTask(taskId) {
+    fetch(`/get-task/${taskId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                document.getElementById('taskId').value = data.id;
+                document.getElementById('taskTitle').value = data.title || '';
+                document.getElementById('taskDescription').value = data.description || '';
+                document.getElementById('taskPriority').value = data.priority;
+                document.getElementById('taskDate').value = data.deadline;
+                document.getElementById('addTaskForm').action = `/edit-task/${data.id}/`;
+                showAddTaskModal();
+            }
+        });
+}
+
+// Delete task
+function deleteTask(taskId) {
+    if (confirm('Are you sure you want to delete?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-task/${taskId}/`;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 {% endblock %}
