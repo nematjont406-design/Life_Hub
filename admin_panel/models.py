@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.utils import OperationalError
 
 class SiteSettings(models.Model):
     site_name = models.CharField(max_length=100, default='LifeHub')
@@ -31,8 +32,8 @@ class SiteSettings(models.Model):
     def get_settings(cls):
         try:
             return cls.objects.get(id=1)
-        except cls.DoesNotExist:
-            return cls.objects.create(id=1)
+        except (cls.DoesNotExist, OperationalError):
+            return None
     
     def __str__(self):
         return 'Sayt sozlamalari'
