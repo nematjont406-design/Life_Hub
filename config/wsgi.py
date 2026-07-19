@@ -19,5 +19,6 @@ application = get_wsgi_application()
 
 # Add WhiteNoise for static file serving in production
 BASE_DIR = Path(__file__).resolve().parent.parent
-application = WhiteNoise(application, root=str(BASE_DIR / 'staticfiles'), prefix='/static/')
-application.add_files(str(BASE_DIR / 'media'), prefix='/media/')
+static_root = str(BASE_DIR / 'staticfiles')
+application = WhiteNoise(application, root=static_root, prefix='static/')
+application.add_files(str(BASE_DIR / 'media'), prefix='media/')
