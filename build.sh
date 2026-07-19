@@ -8,7 +8,7 @@ pip install -r requirements.txt
 python manage.py collectstatic --noinput
 
 # Run migrations
-python manage.py migrate
+python manage.py migrate --noinput
 
-# Create admin user
-python create_admin.py
+# Create admin user (only if database is ready)
+python create_admin.py || echo "Admin user creation skipped (database may not be ready)"
